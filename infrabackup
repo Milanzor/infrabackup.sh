@@ -6,6 +6,9 @@ source "${INFRABACKUP_INSTALLATION_DIRECTORY}/includes/output.inc.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/includes/config.inc.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/includes/rsync.inc.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/includes/rdiff.inc.sh"
+source "${INFRABACKUP_INSTALLATION_DIRECTORY}/includes/hooks.inc.sh"
+source "${INFRABACKUP_INSTALLATION_DIRECTORY}/includes/abort.inc.sh"
+source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/fiddle.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/help.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/show.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/backup.sh"
@@ -21,6 +24,11 @@ show)
   show
   exit 0
   ;;
+fiddle)
+  fiddle $2 $3 $4
+  exit 1
+  ;;
+
 backup)
   backup $2
   ;;

@@ -2,100 +2,66 @@
 
 backup() {
 
-  configId=$1
-
-  if ! checkConfigExists $configId; then
-    error "No configDir passed or the directory does not exist does not exist"
-    exit 1
-  fi
-
-  setlogfile $1
+  backupName="${1}"
 
   # Absolute path
-  configDir="${INFRABACKUP_INSTALLATION_DIRECTORY}/configs/$1"
+  absoluteConfigDir=$(getAbsoluteConfigDir "${backupName}")
+
+  setlogfile $absoluteConfigDir
 
   HAS_ANY_ERROR=false
 
+  ## BEFORE-ALL HOOKS ##
+  runHooks $backupName "before-all"
+
+  if [[ $? -ne 0 ]]; then
+    abort "before-all give a non-zero exit code"
+    exit $?
+  fi
+
   # Fetch the target ssh host
-  local TARGET_HOST=$(getConfigValue $configDir/config.json host)
+  local TARGET_HOST=$(getConfigValue $absoluteConfigDir/config.json host)
 
-  msg "Starting backup ${configDir}"
+  msg "Starting backup ${backupName}"
 
-  ##################
-  ## BEFORE RSYNC ##
-  ##################
+  ## BEFORE-RSYNC HOOKS ##
+  runHooks $backupName "before-rsync"
 
-  local RUN_BEFORE_RSYNC=$(getConfigValue $configDir/config.json scripts.before_rsync[])
-
-  echo "${RUN_BEFORE_RSYNC}" | while read i; do
-
-    if [[ -z "${i}" ]]; then
-      break
-    fi
-
-    msg "Running 'before_rsync' command '${i}'"
-
-    eval "${i}"
-
-    if [ $? -ne 0 ]; then
-      HAS_ANY_ERROR=true
-      msg "before_rsync command had an error"
-    fi
-  done
+  if [[ $? -ne 0 ]]; then
+    abort "before-rsync give a non-zero exit code"
+    exit $?
+  fi
 
   ###########
   ## RSYNC ##
   ###########
 
-  local RSYNC_ARGS=$(getConfigValue $configDir/config.json rsync.args)
-  local RSYNC_TARGET_DIRECTORY=$(getConfigValue $configDir/config.json rsync.target)
-
-  # If the rsync target does not exist, create it
-  if [[ ! -d "${RSYNC_TARGET_DIRECTORY}" ]]; then
-    mkdir -p "${RSYNC_TARGET_DIRECTORY}"
-  fi
-
-  local RSYNC_COMMAND=$(buildRsyncCommand "${RSYNC_ARGS}" "${configDir}/include.list" "${configDir}/exclude.list" "${RSYNC_HOST}" "${RSYNC_TARGET_DIRECTORY}")
-
   msg "Starting rsync"
 
-  eval "${RSYNC_COMMAND}"
+  local RSYNC_COMMAND=$(buildRsyncCommand "${absoluteConfigDir}")
+  bash -c "${RSYNC_COMMAND}"
 
   if [ $? -ne 0 ]; then
     HAS_ANY_ERROR=true
-    msg "Rsync command had an error"
+    msg "rsync command had an error"
   else
     msg "rsync success"
   fi
 
-  #################
-  ## AFTER RSYNC ##
-  #################
+  ## AFTER-RSYNC HOOKS ##
+  runHooks $backupName "after-rsync"
 
-  local RUN_AFTER_RSYNC=$(getConfigValue $configDir/config.json scripts.after_rsync[])
-
-  echo "${RUN_AFTER_RSYNC}" | while read i; do
-
-    if [[ -z "${i}" ]]; then
-      break
-    fi
-
-    msg "Running 'after_rsync' command '${i}'"
-
-    eval "${i}"
-
-    if [ $? -ne 0 ]; then
-      HAS_ANY_ERROR=true
-      msg "after_rsync command had an error"
-    fi
-  done
+  if [[ $? -ne 0 ]]; then
+    abort "after-rsync give a non-zero exit code"
+    exit $?
+  fi
 
   ###########
   ## RDIFF ##
   ###########
 
-  local RDIFF_ARGS=$(getConfigValue $configDir/config.json rdiff.args)
-  local RDIFF_TARGET_DIRECTORY=$(getConfigValue $configDir/config.json rdiff.target)
+  local RDIFF_ARGS=$(getConfigValue $absoluteConfigDir/config.json rdiff.args)
+  local RDIFF_TARGET_DIRECTORY=$(getConfigValue $absoluteConfigDir/config.json rdiff.target)
 
   # If the rsync target does not exist, create it
   if [[ ! -d "${RDIFF_TARGET_DIRECTORY}" ]]; then
@@ -111,40 +77,25 @@ backup() {
 
   msg "Starting rdiff"
 
-  eval "${RDIFF_COMMAND}"
+  bash -c "${RDIFF_COMMAND}"
 
   if [ $? -ne 0 ]; then
     HAS_ANY_ERROR=true
-    msg "Rsync command had an error"
+    msg "rdiff command had an error"
   else
-    msg "rsync success"
+    msg "rdiff success"
   fi
 
-  #################
-  ## AFTER RDIFF ##
-  #################
+  ## AFTER-RDIFF HOOKS ##
+  runHooks $backupName "after-rdiff"
 
-  local RUN_AFTER_RDIFF=$(getConfigValue $configDir/config.json scripts.after_rdiff[])
+  if [[ $? -ne 0 ]]; then
+    abort "after-rdiff hook give a non-zero exit code"
+    exit $?
+  fi
 
-  echo "${RUN_AFTER_RDIFF}" | while read i; do
-
-    if [[ -z "${i}" ]]; then
-      break
-    fi
-    msg "Running 'after_rdiff' command '${i}'"
-
-    eval "${i}"
-
-    if [ $? -ne 0 ]; then
-      HAS_ANY_ERROR=true
-
-      echo $HAS_ANY_ERROR
-      msg "after_rdiff command had an error"
-    fi
-  done
-
-  local MAIL_SUBJECT=$(getConfigValue $configDir/config.json mail.subject)
-  local MAIL_TO=$(getConfigValue $configDir/config.json mail.to)
+  local MAIL_SUBJECT=$(getConfigValue $absoluteConfigDir/config.json mail.subject)
+  local MAIL_TO=$(getConfigValue $absoluteConfigDir/config.json mail.to)
 
   ###########
   ## EMAIL ##
@@ -161,7 +112,9 @@ backup() {
       local MAIL_CONTENTS="Nothing to see here!"
     fi
 
-    echo "echo -e "${MAIL_CONTENTS}" | mutt -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}""
+    echo $MAIL_SUBJECT
+    #        echo -e "${MAIL_CONTENTS}" | mutt -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
+
   fi
   return 0
 }

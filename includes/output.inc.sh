@@ -38,7 +38,10 @@ error() {
 }
 
 setlogfile() {
-  LOGFILE="${INFRABACKUP_INSTALLATION_DIRECTORY}/configs/${1}/$(date +%Y%m%d%H%M).log"
+
+  absoluteConfigDir=${1}
+
+  LOGFILE="${absoluteConfigDir}$(date +%Y%m%d%H%M).log"
   exec > >(tee -i ${LOGFILE})
   exec 2>&1
 }

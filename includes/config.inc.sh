@@ -5,18 +5,14 @@ getConfigValue() {
   echo "$CFG" | jq -r '.'$2
 }
 
-checkConfigExists() {
+getAbsoluteConfigDir() {
 
-  configDir=$1
+  configDir="${INFRABACKUP_INSTALLATION_DIRECTORY}/configs/${1}/"
 
-  if [[ -z "$configDir" ]]; then
-    return 1
+  if [[ ! -d "${configDir}" ]]; then
+    error "configDir '${configDir}' does not exist"
+    exit 1
   fi
 
-  if [[ ! -d "${INFRABACKUP_INSTALLATION_DIRECTORY}/configs/${configDir}" ]]; then
-    return 1
-  fi
-
-  return 0
-
+  echo "${configDir}"
 }
