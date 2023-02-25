@@ -4,8 +4,18 @@ backup() {
 
   backupName="${1}"
 
+  if [[ -z "${backupName}" ]]; then
+    abort "No name provided"
+    exit 1
+  fi
+
   # Absolute path
   absoluteConfigDir=$(getAbsoluteConfigDir "${backupName}")
+
+  if [[ $? -ne 0 ]]; then
+    abort "Couldnt find config directory with name '${backupName}'"
+    exit 1
+  fi
 
   setlogfile $absoluteConfigDir
 
@@ -60,16 +70,10 @@ backup() {
   ## RDIFF ##
   ###########
 
-  local RDIFF_ARGS=$(getConfigValue $absoluteConfigDir/config.json rdiff.args)
   local RDIFF_TARGET_DIRECTORY=$(getConfigValue $absoluteConfigDir/config.json rdiff.target)
 
-  # If the rsync target does not exist, create it
-  if [[ ! -d "${RDIFF_TARGET_DIRECTORY}" ]]; then
-    mkdir -p "${RDIFF_TARGET_DIRECTORY}"
-  fi
-
-  local RDIFF_COMMAND=$(buildRdiffCommand "${RDIFF_ARGS}" "${RSYNC_TARGET_DIRECTORY}" "${RDIFF_TARGET_DIRECTORY}")
-
+  local RDIFF_COMMAND=$(buildRdiffCommand "${absoluteConfigDir}" )
+echo $RDIFF_COMMAND
   # If the diff target does not exist, create it
   if [[ ! -d "${RDIFF_TARGET_DIRECTORY}" ]]; then
     mkdir -p "${RDIFF_TARGET_DIRECTORY}"

@@ -11,6 +11,7 @@ buildRsyncCommand() {
   if [[ -f "${absoluteConfigDir}include.list" ]]; then
     RSYNC_ARGS="${RSYNC_ARGS} --files-from='${absoluteConfigDir}include.list'"
   fi
+  
   if [[ -f "${absoluteConfigDir}exclude.list" ]]; then
     RSYNC_ARGS="${RSYNC_ARGS} --exclude-from='${absoluteConfigDir}exclude.list'"
   fi

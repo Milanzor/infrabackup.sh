@@ -2,9 +2,14 @@
 
 buildRdiffCommand() {
 
-  local RDIFF_ARGS=$1
-  local SOURCE_DIRECTORY=$2
-  local TARGET_DIRECTORY=$3
+  local absoluteConfigDir="${1}"
 
-  echo "rdiff-backup ${RDIFF_ARGS} ${SOURCE_DIRECTORY} ${TARGET_DIRECTORY}"
+  local RDIFF_ARGS=$(getConfigValue "${absoluteConfigDir}config.json" rdiff.args)
+
+  # Yes, RSYNC, that's where we get our rdiff source directory from
+  local SOURCE_DIRECTORY=$(getConfigValue "${absoluteConfigDir}config.json" rsync.target)
+
+  local RDIFF_TARGET_DIRECTORY=$(getConfigValue "${absoluteConfigDir}config.json" rdiff.target)
+
+  echo "rdiff-backup ${RDIFF_ARGS} ${SOURCE_DIRECTORY} ${RDIFF_TARGET_DIRECTORY}"
 }
