@@ -22,15 +22,18 @@ backup() {
   HAS_ANY_ERROR=false
 
   ## BEFORE-ALL HOOKS ##
-  runHooks $backupName "before-all"
-
+  runHooks "${backupName}" "before-all"
+  echo $?
   if [[ $? -ne 0 ]]; then
     abort "before-all give a non-zero exit code"
     exit $?
   fi
 
+  echo "dbg"
+  exit 0
+
   # Fetch the target ssh host
-  local TARGET_HOST=$(getConfigValue $absoluteConfigDir/config.json host)
+  local TARGET_HOST=$(getConfigValue $absoluteConfigDir host)
 
   msg "Starting backup ${backupName}"
 
@@ -49,6 +52,7 @@ backup() {
   msg "Starting rsync"
 
   local RSYNC_COMMAND=$(buildRsyncCommand "${absoluteConfigDir}")
+
   bash -c "${RSYNC_COMMAND}"
 
   if [ $? -ne 0 ]; then
@@ -70,10 +74,10 @@ backup() {
   ## RDIFF ##
   ###########
 
-  local RDIFF_TARGET_DIRECTORY=$(getConfigValue $absoluteConfigDir/config.json rdiff.target)
+  local RDIFF_TARGET_DIRECTORY=$(getConfigValue $absoluteConfigDir rdiff.target)
 
-  local RDIFF_COMMAND=$(buildRdiffCommand "${absoluteConfigDir}" )
-echo $RDIFF_COMMAND
+  local RDIFF_COMMAND=$(buildRdiffCommand "${absoluteConfigDir}")
+
   # If the diff target does not exist, create it
   if [[ ! -d "${RDIFF_TARGET_DIRECTORY}" ]]; then
     mkdir -p "${RDIFF_TARGET_DIRECTORY}"
@@ -98,8 +102,8 @@ echo $RDIFF_COMMAND
     exit $?
   fi
 
-  local MAIL_SUBJECT=$(getConfigValue $absoluteConfigDir/config.json mail.subject)
-  local MAIL_TO=$(getConfigValue $absoluteConfigDir/config.json mail.to)
+  local MAIL_SUBJECT=$(getConfigValue $absoluteConfigDir mail.subject)
+  local MAIL_TO=$(getConfigValue $absoluteConfigDir mail.to)
 
   ###########
   ## EMAIL ##

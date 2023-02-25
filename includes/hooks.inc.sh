@@ -4,12 +4,12 @@ runHooks() {
 
   absoluteConfigDir=$(getAbsoluteConfigDir "${1}")
   hookType="${2}"
-  HAS_ERROR=false
 
-  for FILE in "${absoluteConfigDir}hooks/${hookType}/*"; do
+  returnValue=0
 
-    # Skip directories
-    if [[ -d "${FILE}" ]]; then
+  find "${absoluteConfigDir}hooks/${hookType}/" -maxdepth 1 -mindepth 1 -type f | while read FILE; do
+
+    if [[ "${returnValue}" = 1 ]]; then
       continue
     fi
 
@@ -18,13 +18,14 @@ runHooks() {
       continue
     fi
 
-    bash "${FILE}" || HAS_ERROR=true
-
-    if [ "${HAS_ERROR}" = true ]; then
-      return 1
+    bash "${FILE}"
+    exitCode=$?
+    if [[ "${exitCode}" -ne 0 ]]; then
+      abort "Non-zero (${exitCode}) exit code received from ${hookType} hook: ${FILE}"
+      returnValue=1
     fi
 
   done
 
-  return 0
+  return $returnValue
 }

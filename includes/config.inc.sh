@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 
 getConfigValue() {
-  local CFG="$(<$1)"
+
+  local absoluteConfigDir="${1}"
+   configFile="${absoluteConfigDir}config.json"
+  local CFG="$(<$configFile)"
   echo "$CFG" | jq -r '.'$2
 }
 
 getAbsoluteConfigDir() {
 
-  configDir="${INFRABACKUP_INSTALLATION_DIRECTORY}/configs/${1}/"
+  local configDir="${INFRABACKUP_INSTALLATION_DIRECTORY}/configs/${1}/"
 
   if [[ ! -d "${configDir}" ]]; then
     error "configDir '${configDir}' does not exist"
