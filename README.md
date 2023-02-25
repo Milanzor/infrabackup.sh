@@ -11,20 +11,6 @@ configs/flow.infra.vastgoedflow.nl/config.json
 {
   "schedule": "0 10 * * * *",
   "host": "",
-  "scripts": {
-    "before_rsync": [
-      "echo \"Hi, I'm before_rsync number 1\"",
-      "echo \"Hi, I'm before_rsync number 2\""
-    ],
-    "after_rsync": [
-      "echo \"Hi, I'm after_rsync number 1\"",
-      "echo \"Hi, I'm after_rsync number 2\""
-    ],
-    "after_rdiff": [
-      "echo \"Hi, I'm after_rdiff number 1\"",
-      "asdiwefjiwerjf"
-    ]
-  },
   "rsync": {
     "args": "-arv --inplace --delete --stats",
     "target": "/home/milan/projects/infrabackup.sh/demo/milan.test/rsync/"
@@ -41,6 +27,7 @@ configs/flow.infra.vastgoedflow.nl/config.json
     "after": "https://localhost"
   }
 }
+
 
 ```
 
