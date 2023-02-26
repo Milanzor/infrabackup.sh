@@ -50,11 +50,11 @@ cronEnable() {
     exit 1
   fi
 
-  local cronFilePath=$(_getCronFilePath)
-  local cronFile=$(_getCronFileName "${absoluteConfigDir}")
+  local cronFilePath=$(getCronFilePath)
+  local cronFile=$(getCronFileName "${absoluteConfigDir}")
 
   if [[ -L "/etc/cron.d/${cronFile}" ]]; then
-    warn "Cron already installed"
+    success "Cron ${cronFile} was already enabled, successfully refreshed"
     exit 0
   fi
 
@@ -74,10 +74,10 @@ cronEnable() {
 cronDisable() {
   local absoluteConfigDir="${1}"
 
-  local cronFile=$(_getCronFileName "${absoluteConfigDir}")
+  local cronFile=$(getCronFileName "${absoluteConfigDir}")
 
   if [[ ! -L "/etc/cron.d/${cronFile}" ]]; then
-    error "Cron not installed"
+    error "Cron ${cronFile} was not enabled"
     exit 1
   fi
 
@@ -103,8 +103,8 @@ _buildCronFile() {
     return 1
   fi
 
-  local cronFilePath=$(_getCronFilePath)
-  local cronFile=$(_getCronFileName "${absoluteConfigDir}")
+  local cronFilePath=$(getCronFilePath)
+  local cronFile=$(getCronFileName "${absoluteConfigDir}")
 
   # Create the config/cron directory
   if [[ ! -d "${cronFilePath}" ]]; then
@@ -134,15 +134,4 @@ _buildCronFile() {
   error "Failed to _buildCronFile"
   return 1
 
-}
-
-_getCronFileName() {
-  local absoluteConfigDir="${1}"
-  local backupName=$(basename "${absoluteConfigDir}")
-  local cleanedBackupname=$(echo "${backupName}" | tr -d '.')
-  echo -e "infrabackup-cron-${cleanedBackupname}"
-}
-
-_getCronFilePath() {
-  echo -e "${INFRABACKUP_INSTALLATION_DIRECTORY}/crons/"
 }

@@ -6,19 +6,21 @@ show() {
 
     local backupName=$(basename "${dir}")
     local absoluteConfigDir=$(getAbsoluteConfigDir "${backupName}")
-    
-    local schedule=$(getConfigValue "${absoluteConfigDir}" schedule)
+
+    local cron=$(getConfigValue "${absoluteConfigDir}" cron)
     local mailTo=$(getConfigValue "${absoluteConfigDir}" mail.to)
-    local mailSubject=$(getConfigValue "${absoluteConfigDir}" mail.subject)
-    local webhookBefore=$(getConfigValue "${absoluteConfigDir}" webhook.before)
-    local webhookAfter=$(getConfigValue "${absoluteConfigDir}" webhook.after)
+
+    local cronFile=$(getCronFileName "${absoluteConfigDir}")
+
+    local cronIsEnabled=false
+    if [[ -L "/etc/cron.d/${cronFile}" ]]; then
+      local cronIsEnabled=true
+    fi
 
     echo "Backup:         ${backupName}"
-    echo "Cron schedule:  $schedule"
-    echo "Mail to:        $mailTo"
-    echo "Mail subject:   $mailSubject"
-    echo "Webhook before: $webhookBefore"
-    echo "Webhook after:  $webhookAfter"
+    echo "Cron schedule:  $cron"
+    echo "Cron enabled:   $cronIsEnabled"
+    echo "Mail result to: $mailTo"
     echo ""
 
   done
