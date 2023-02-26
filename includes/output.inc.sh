@@ -17,8 +17,6 @@ LPURPLE='\033[01;35m'
 LCYAN='\033[01;36m'
 WHITE='\033[01;37m'
 
-LOGFILE=
-
 log() {
 
   if [[ -z "${LOGFILE}" ]]; then
