@@ -3,7 +3,7 @@
 getConfigValue() {
 
   local absoluteConfigDir="${1}"
-   configFile="${absoluteConfigDir}config.json"
+  local configFile="${absoluteConfigDir}config.json"
   local CFG="$(<$configFile)"
   echo "$CFG" | jq -r '.'$2
 }

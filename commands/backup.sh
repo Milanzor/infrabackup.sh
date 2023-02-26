@@ -5,7 +5,7 @@ backup() {
   backupName="${1}"
 
   if [[ -z "${backupName}" ]]; then
-    abort "No name provided"
+    logError "No name provided"
     exit 1
   fi
 
@@ -13,7 +13,7 @@ backup() {
   absoluteConfigDir=$(getAbsoluteConfigDir "${backupName}")
 
   if [[ $? -ne 0 ]]; then
-    abort "Couldnt find config directory with name '${backupName}'"
+    logError "Couldnt find config directory with name '${backupName}'"
     exit 1
   fi
 
@@ -23,25 +23,22 @@ backup() {
 
   ## BEFORE-ALL HOOKS ##
   runHooks "${backupName}" "before-all"
-  echo $?
+
   if [[ $? -ne 0 ]]; then
-    abort "before-all give a non-zero exit code"
+    logError "before-all give a non-zero exit code"
     exit $?
   fi
-
-  echo "dbg"
-  exit 0
 
   # Fetch the target ssh host
   local TARGET_HOST=$(getConfigValue $absoluteConfigDir host)
 
-  msg "Starting backup ${backupName}"
+  log "Starting backup ${backupName}"
 
   ## BEFORE-RSYNC HOOKS ##
   runHooks $backupName "before-rsync"
 
   if [[ $? -ne 0 ]]; then
-    abort "before-rsync give a non-zero exit code"
+    logError "before-rsync give a non-zero exit code"
     exit $?
   fi
 
@@ -49,7 +46,7 @@ backup() {
   ## RSYNC ##
   ###########
 
-  msg "Starting rsync"
+  log "Starting rsync"
 
   local RSYNC_COMMAND=$(buildRsyncCommand "${absoluteConfigDir}")
 
@@ -57,16 +54,16 @@ backup() {
 
   if [ $? -ne 0 ]; then
     HAS_ANY_ERROR=true
-    msg "rsync command had an error"
+    log "rsync command had an error"
   else
-    msg "rsync success"
+    log "rsync success"
   fi
 
   ## AFTER-RSYNC HOOKS ##
   runHooks $backupName "after-rsync"
 
   if [[ $? -ne 0 ]]; then
-    abort "after-rsync give a non-zero exit code"
+    logError "after-rsync give a non-zero exit code"
     exit $?
   fi
 
@@ -83,22 +80,22 @@ backup() {
     mkdir -p "${RDIFF_TARGET_DIRECTORY}"
   fi
 
-  msg "Starting rdiff"
+  log "Starting rdiff"
 
   bash -c "${RDIFF_COMMAND}"
 
   if [ $? -ne 0 ]; then
     HAS_ANY_ERROR=true
-    msg "rdiff command had an error"
+    log "rdiff command had an error"
   else
-    msg "rdiff success"
+    log "rdiff success"
   fi
 
   ## AFTER-RDIFF HOOKS ##
   runHooks $backupName "after-rdiff"
 
   if [[ $? -ne 0 ]]; then
-    abort "after-rdiff hook give a non-zero exit code"
+    logError "after-rdiff hook give a non-zero exit code"
     exit $?
   fi
 

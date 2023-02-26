@@ -12,12 +12,13 @@ show() {
     local webhookBefore=$(getConfigValue "${absoluteConfigDir}" webhook.before)
     local webhookAfter=$(getConfigValue "${absoluteConfigDir}" webhook.after)
 
-    info "######## ${backupName} ###########"
-    msg "Cron schedule: $schedule"
-    msg "Mail to: $mailTo"
-    msg "Mail subject: $mailSubject"
-    msg "Webhook before: $webhookBefore"
-    msg "Webhook after: $webhookAfter"
+    echo "Backup:         ${backupName}"
+    echo "Cron schedule:  $schedule"
+    echo "Mail to:        $mailTo"
+    echo "Mail subject:   $mailSubject"
+    echo "Webhook before: $webhookBefore"
+    echo "Webhook after:  $webhookAfter"
+    echo ""
 
   done
 

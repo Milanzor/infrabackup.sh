@@ -17,31 +17,39 @@ LPURPLE='\033[01;35m'
 LCYAN='\033[01;36m'
 WHITE='\033[01;37m'
 
+LOGFILE=
+
+log() {
+
+  if [[ -z "${LOGFILE}" ]]; then
+    error "log function called but log file not set, please call setlogfile"
+    exit 1
+  fi
+
+  MESSAGE="$(date +'%Y-%m-%d %H:%M:%S') - ${1}"
+
+  # To log file
+  echo -e "${MESSAGE}" >>"${LOGFILE}"
+
+  # To output
+  echo -e "$(date +'%Y-%m-%d %H:%M:%S') - ${1}"
+}
+
 msg() {
-  echo -e "$(date +'%Y-%m-%d %H:%M') - ${1}"
+  echo -e "${1}"
 }
 
-info() {
-  msg "${CYAN}$1${RESTORE}"
-}
-
-success() {
-  msg "${GREEN}$1${RESTORE}"
-}
-
-warn() {
-  msg "${YELLOW}$1${RESTORE}"
-}
-
-error() {
-  msg "${RED}$1${RESTORE}"
+logError() {
+  log "ERROR: ${1}"
 }
 
 setlogfile() {
-
   absoluteConfigDir=${1}
 
-  LOGFILE="${absoluteConfigDir}$(date +%Y%m%d%H%M).log"
-  exec > >(tee -i ${LOGFILE})
-  exec 2>&1
+  # Random 5 character string
+  runId=$(
+    echo $RANDOM | md5sum | head -c 5
+    echo
+  )
+  LOGFILE="${absoluteConfigDir}$(date +%Y%m%d%H%M)-${runId}.log"
 }

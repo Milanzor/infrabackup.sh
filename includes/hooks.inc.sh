@@ -5,9 +5,11 @@ runHooks() {
   absoluteConfigDir=$(getAbsoluteConfigDir "${1}")
   hookType="${2}"
 
-  returnValue=0
+  local returnValue=0
 
-  find "${absoluteConfigDir}hooks/${hookType}/" -maxdepth 1 -mindepth 1 -type f | while read FILE; do
+  hookFiles=$(find "${absoluteConfigDir}hooks/${hookType}/" -maxdepth 1 -mindepth 1 -type f)
+
+  while read FILE; do
 
     if [[ "${returnValue}" = 1 ]]; then
       continue
@@ -18,14 +20,18 @@ runHooks() {
       continue
     fi
 
-    bash "${FILE}"
+    log "Running ${hookType} hook $(basename ${FILE})"
+
+    bash -c "${FILE}"
+
     exitCode=$?
+
     if [[ "${exitCode}" -ne 0 ]]; then
-      abort "Non-zero (${exitCode}) exit code received from ${hookType} hook: ${FILE}"
+      logError "Non-zero (${exitCode}) exit code received from ${hookType} hook: ${FILE}"
       returnValue=1
     fi
 
-  done
+  done < <(echo -e "${hookFiles}")
 
   return $returnValue
 }
