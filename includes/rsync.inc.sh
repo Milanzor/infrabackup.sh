@@ -24,5 +24,5 @@ buildRsyncCommand() {
     local HOST="${HOST}:"
   fi
 
-  echo "mkdir -p ${RSYNC_TARGET_DIRECTORY} && rsync ${RSYNC_ARGS} ${HOST}/ ${RSYNC_TARGET_DIRECTORY}"
+  echo "mkdir -p ${RSYNC_TARGET_DIRECTORY} && rsync ${RSYNC_ARGS} ${HOST}/ ${RSYNC_TARGET_DIRECTORY} 2>&1 | tee -a ${LOGFILE}"
 }

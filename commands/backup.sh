@@ -98,7 +98,6 @@ backup() {
     exit $?
   fi
 
-  local MAIL_SUBJECT=$(getConfigValue $absoluteConfigDir mail.subject)
   local MAIL_TO=$(getConfigValue $absoluteConfigDir mail.to)
 
   ###########
@@ -116,9 +115,33 @@ backup() {
       local MAIL_CONTENTS="Nothing to see here!"
     fi
 
-    echo $MAIL_SUBJECT
-    #        echo -e "${MAIL_CONTENTS}" | mutt -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
+    ## BEFORE-MAIL HOOKS ##
+    runHooks "${backupName}" "before-mail"
 
+    if [[ $? -ne 0 ]]; then
+      logError "before-mail give a non-zero exit code"
+      exit $?
+    fi
+
+    # TODO
+#    echo -e "${MAIL_CONTENTS}" | mutt -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
+
+    ## AFTER-MAIL HOOKS ##
+    runHooks "${backupName}" "after-mail"
+
+    if [[ $? -ne 0 ]]; then
+      logError "after-mail give a non-zero exit code"
+      exit $?
+    fi
   fi
+
+  ## AFTER-ALL HOOKS ##
+  runHooks "${backupName}" "after-all"
+
+  if [[ $? -ne 0 ]]; then
+    logError "after-all give a non-zero exit code"
+    exit $?
+  fi
+
   return 0
 }

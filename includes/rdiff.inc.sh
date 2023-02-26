@@ -11,5 +11,5 @@ buildRdiffCommand() {
 
   local RDIFF_TARGET_DIRECTORY=$(getConfigValue "${absoluteConfigDir}" rdiff.target)
 
-  echo "mkdir -p ${RDIFF_TARGET_DIRECTORY} && rdiff-backup ${RDIFF_ARGS} ${SOURCE_DIRECTORY} ${RDIFF_TARGET_DIRECTORY}"
+  echo "mkdir -p ${RDIFF_TARGET_DIRECTORY} && rdiff-backup ${RDIFF_ARGS} ${SOURCE_DIRECTORY} ${RDIFF_TARGET_DIRECTORY} 2>&1 | tee -a ${LOGFILE}"
 }

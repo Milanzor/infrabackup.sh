@@ -9,6 +9,9 @@ fi
 # Fetch absolute path to this script
 INFRABACKUP_INSTALLATION_DIRECTORY=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
+# Initialize the variable for later use
+LOGFILE=
+
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/includes/output.inc.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/includes/config.inc.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/includes/rsync.inc.sh"

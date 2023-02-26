@@ -29,10 +29,8 @@ log() {
   MESSAGE="$(date +'%Y-%m-%d %H:%M:%S') - ${1}"
 
   # To log file
-  echo -e "${MESSAGE}" >>"${LOGFILE}"
+  echo -e "${MESSAGE}" | tee -a "${LOGFILE}"
 
-  # To output
-  echo -e "$(date +'%Y-%m-%d %H:%M:%S') - ${1}"
 }
 
 msg() {

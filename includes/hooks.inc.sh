@@ -22,7 +22,7 @@ runHooks() {
 
     log "Running ${hookType} hook $(basename ${FILE})"
 
-    bash -c "${FILE}"
+    bash -c "${FILE}" | tee -a "${LOGFILE}"
 
     exitCode=$?
 
