@@ -2,3 +2,5 @@
 configs/*
 !configs/empty
 demo/*
+crons/*
+!crons/empty

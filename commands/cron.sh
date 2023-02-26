@@ -50,7 +50,7 @@ cronEnable() {
     exit 1
   fi
 
-  local cronFilePath=$(_getCronFilePath "${absoluteConfigDir}")
+  local cronFilePath=$(_getCronFilePath)
   local cronFile=$(_getCronFileName "${absoluteConfigDir}")
 
   if [[ -L "/etc/cron.d/${cronFile}" ]]; then
@@ -103,7 +103,7 @@ _buildCronFile() {
     return 1
   fi
 
-  local cronFilePath=$(_getCronFilePath "${absoluteConfigDir}")
+  local cronFilePath=$(_getCronFilePath)
   local cronFile=$(_getCronFileName "${absoluteConfigDir}")
 
   # Create the config/cron directory
@@ -113,16 +113,16 @@ _buildCronFile() {
 
   CRON_COMMAND="# DO NOT MANUALLY EDIT THIS FILE\n"
   CRON_COMMAND="${CRON_COMMAND}# THIS FILE WAS CREATED WITH INFRABACKUP (${INFRABACKUP_INSTALLATION_DIRECTORY})\n"
-#  CRON_COMMAND="${CRON_COMMAND}${CRON_SCHEDULE}"
-#  CRON_COMMAND="${CRON_COMMAND}* * * * *"
+  CRON_COMMAND="${CRON_COMMAND}${CRON_SCHEDULE}"
+  #  CRON_COMMAND="${CRON_COMMAND}* * * * *"
   CRON_COMMAND="${CRON_COMMAND} root"
   CRON_COMMAND="${CRON_COMMAND} ${INFRABACKUP_INSTALLATION_DIRECTORY}/"
   CRON_COMMAND="${CRON_COMMAND}infrabackup \"backup\" \"${backupName}\""
 
   # End with a newline
   CRON_COMMAND="${CRON_COMMAND}\n"
-#  CRON_COMMAND="${CRON_COMMAND}0 * * * * root date >> /tmp/cron_tmp >/dev/null 2>&1"
-#  CRON_COMMAND="${CRON_COMMAND}\n"
+  #  CRON_COMMAND="${CRON_COMMAND}0 * * * * root date >> /tmp/cron_tmp >/dev/null 2>&1"
+  #  CRON_COMMAND="${CRON_COMMAND}\n"
 
   echo -e "$CRON_COMMAND" >"${cronFilePath}${cronFile}"
   chmod 644 "${cronFilePath}${cronFile}"
@@ -144,6 +144,5 @@ _getCronFileName() {
 }
 
 _getCronFilePath() {
-  local absoluteConfigDir="${1}"
-  echo -e "${absoluteConfigDir}crons/"
+  echo -e "${INFRABACKUP_INSTALLATION_DIRECTORY}/crons/"
 }
