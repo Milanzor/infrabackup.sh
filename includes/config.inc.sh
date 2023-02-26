@@ -6,14 +6,13 @@ getConfigValue() {
   local configKey="${2}"
   local configFile="${absoluteConfigDir}config.json"
   local CFG="$(cat $configFile)"
-  echo $CFG
   configValue=$(cat "$configFile" | jq -r '.'${configKey})
 
   if [[ "${configValue}" = "null" ]]; then
     configValue=""
   fi
 
-  echo "${configValue}"
+  echo -e "${configValue}"
 }
 
 hasConfigKey() {
