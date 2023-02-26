@@ -6,6 +6,7 @@ show() {
 
     local backupName=$(basename "${dir}")
     local absoluteConfigDir=$(getAbsoluteConfigDir "${backupName}")
+    
     local schedule=$(getConfigValue "${absoluteConfigDir}" schedule)
     local mailTo=$(getConfigValue "${absoluteConfigDir}" mail.to)
     local mailSubject=$(getConfigValue "${absoluteConfigDir}" mail.subject)

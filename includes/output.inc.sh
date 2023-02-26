@@ -39,6 +39,22 @@ msg() {
   echo -e "${1}"
 }
 
+info() {
+  msg "${CYAN}$1${RESTORE}"
+}
+
+success() {
+  msg "${GREEN}$1${RESTORE}"
+}
+
+warn() {
+  msg "${YELLOW}$1${RESTORE}"
+}
+
+error() {
+  msg "${RED}$1${RESTORE}"
+}
+
 logError() {
   log "ERROR: ${1}"
 }

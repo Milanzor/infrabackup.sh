@@ -3,9 +3,26 @@
 getConfigValue() {
 
   local absoluteConfigDir="${1}"
+  local configKey="${2}"
+  local configFile="${absoluteConfigDir}config.json"
+  local CFG="$(cat $configFile)"
+  echo $CFG
+  configValue=$(cat "$configFile" | jq -r '.'${configKey})
+
+  if [[ "${configValue}" = "null" ]]; then
+    configValue=""
+  fi
+
+  echo "${configValue}"
+}
+
+hasConfigKey() {
+
   local configFile="${absoluteConfigDir}config.json"
   local CFG="$(<$configFile)"
-  echo "$CFG" | jq -r '.'$2
+  echo "has(\"${2}\")"
+  echo "$CFG"
+  echo "$CFG" | jq -r $(echo "has(\"${2}\")")
 }
 
 getAbsoluteConfigDir() {
@@ -13,7 +30,6 @@ getAbsoluteConfigDir() {
   local configDir="${INFRABACKUP_INSTALLATION_DIRECTORY}/configs/${1}/"
 
   if [[ ! -d "${configDir}" ]]; then
-    error "configDir '${configDir}' does not exist"
     exit 1
   fi
 

@@ -19,6 +19,8 @@ backup() {
 
   setlogfile $absoluteConfigDir
 
+  log "Starting backup ${backupName}"
+
   HAS_ANY_ERROR=false
 
   ## BEFORE-ALL HOOKS ##
@@ -31,8 +33,6 @@ backup() {
 
   # Fetch the target ssh host
   local TARGET_HOST=$(getConfigValue $absoluteConfigDir host)
-
-  log "Starting backup ${backupName}"
 
   ## BEFORE-RSYNC HOOKS ##
   runHooks $backupName "before-rsync"
@@ -72,7 +72,6 @@ backup() {
   ###########
 
   local RDIFF_TARGET_DIRECTORY=$(getConfigValue $absoluteConfigDir rdiff.target)
-
   local RDIFF_COMMAND=$(buildRdiffCommand "${absoluteConfigDir}")
 
   # If the diff target does not exist, create it

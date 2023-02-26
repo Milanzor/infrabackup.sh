@@ -9,7 +9,7 @@ configs/flow.infra.vastgoedflow.nl/config.json
 
 ```json
 {
-  "schedule": "0 10 * * * *",
+  "cron": "0 10 * * * *",
   "host": "",
   "rsync": {
     "args": "-arv --inplace --delete --stats",
@@ -31,9 +31,13 @@ configs/flow.infra.vastgoedflow.nl/config.json
 
 ```
 
-infra-backup schedule list
-infra-backup schedule enable
-infra-backup schedule disable
+# TODO
 
-infra-backup validate
-infra-backup backup milan.test
+infrabackup cron enable
+infrabackup cron disable
+infrabackup validate
+
+# DONE
+
+infrabackup backup $backupName
+infrabackup show
