@@ -126,6 +126,8 @@ backup() {
       exit $?
     fi
 
+    log "Sending result email"
+
     echo -e "${MAIL_CONTENTS}" | mutt -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
 
     ## AFTER-MAIL HOOKS ##

@@ -22,9 +22,10 @@
 
 # TODO
 
-- infrabackup install
-- infrabackup validate
-- Fix mail
+- infrabackup show => Show more details
+- infrabackup new => Build a new config
+- infrabackup purge => Purge rdiff backups older than <config var> + log files too
+- infrabackup restore => Restore stuff
 
 # DONE
 
