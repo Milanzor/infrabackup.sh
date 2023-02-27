@@ -4,6 +4,7 @@ runHooks() {
 
   absoluteConfigDir=$(getAbsoluteConfigDir "${1}")
   hookType="${2}"
+  HAS_ANY_ERROR="${3}"
 
   local returnValue=0
 
@@ -22,7 +23,8 @@ runHooks() {
 
     log "Running ${hookType} hook $(basename ${FILE})"
 
-    bash -c "${FILE}" | tee -a "${LOGFILE}"
+    # Execute the file
+    "${FILE}" "${HAS_ANY_ERROR}" | tee -a "${LOGFILE}"
 
     exitCode=$?
 

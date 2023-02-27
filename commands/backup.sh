@@ -24,7 +24,7 @@ backup() {
   HAS_ANY_ERROR=false
 
   ## BEFORE-ALL HOOKS ##
-  runHooks "${backupName}" "before-all"
+  runHooks "${backupName}" "before-all" "${HAS_ANY_ERROR}"
 
   if [[ $? -ne 0 ]]; then
     logError "before-all give a non-zero exit code"
@@ -35,7 +35,7 @@ backup() {
   local TARGET_HOST=$(getConfigValue $absoluteConfigDir host)
 
   ## BEFORE-RSYNC HOOKS ##
-  runHooks $backupName "before-rsync"
+  runHooks $backupName "before-rsync" "${HAS_ANY_ERROR}"
 
   if [[ $? -ne 0 ]]; then
     logError "before-rsync give a non-zero exit code"
@@ -60,7 +60,7 @@ backup() {
   fi
 
   ## AFTER-RSYNC HOOKS ##
-  runHooks $backupName "after-rsync"
+  runHooks $backupName "after-rsync" "${HAS_ANY_ERROR}"
 
   if [[ $? -ne 0 ]]; then
     logError "after-rsync give a non-zero exit code"
@@ -91,7 +91,7 @@ backup() {
   fi
 
   ## AFTER-RDIFF HOOKS ##
-  runHooks $backupName "after-rdiff"
+  runHooks $backupName "after-rdiff" "${HAS_ANY_ERROR}"
 
   if [[ $? -ne 0 ]]; then
     logError "after-rdiff hook give a non-zero exit code"
@@ -105,18 +105,16 @@ backup() {
   ###########
   if [[ ! -z "${MAIL_TO}" ]]; then
 
-    # TODO THIS DOESNT WORK
     if [[ "$HAS_ANY_ERROR" == true ]]; then
       local MAIL_SUBJECT="Infrabackup ${configId} finished with errors"
       local MAIL_CONTENTS="Please check the log."
-
     else
       local MAIL_SUBJECT="Infrabackup ${configId} finished successfully"
       local MAIL_CONTENTS="Nothing to see here!"
     fi
 
     ## BEFORE-MAIL HOOKS ##
-    runHooks "${backupName}" "before-mail"
+    runHooks "${backupName}" "before-mail" "${HAS_ANY_ERROR}"
 
     if [[ $? -ne 0 ]]; then
       logError "before-mail give a non-zero exit code"
@@ -127,7 +125,7 @@ backup() {
 #    echo -e "${MAIL_CONTENTS}" | mutt -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
 
     ## AFTER-MAIL HOOKS ##
-    runHooks "${backupName}" "after-mail"
+    runHooks "${backupName}" "after-mail" "${HAS_ANY_ERROR}"
 
     if [[ $? -ne 0 ]]; then
       logError "after-mail give a non-zero exit code"
@@ -136,7 +134,7 @@ backup() {
   fi
 
   ## AFTER-ALL HOOKS ##
-  runHooks "${backupName}" "after-all"
+  runHooks "${backupName}" "after-all" "${HAS_ANY_ERROR}"
 
   if [[ $? -ne 0 ]]; then
     logError "after-all give a non-zero exit code"

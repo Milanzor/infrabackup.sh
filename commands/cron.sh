@@ -117,14 +117,15 @@ _buildCronFile() {
   #  CRON_COMMAND="${CRON_COMMAND}* * * * *"
   CRON_COMMAND="${CRON_COMMAND} root"
   CRON_COMMAND="${CRON_COMMAND} ${INFRABACKUP_INSTALLATION_DIRECTORY}/"
-  CRON_COMMAND="${CRON_COMMAND}infrabackup \"backup\" \"${backupName}\""
+  CRON_COMMAND="${CRON_COMMAND}infrabackup \"backup\" \"${backupName}\" >/dev/null 2>&1"
 
   # End with a newline
   CRON_COMMAND="${CRON_COMMAND}\n"
-  #  CRON_COMMAND="${CRON_COMMAND}0 * * * * root date >> /tmp/cron_tmp >/dev/null 2>&1"
-  #  CRON_COMMAND="${CRON_COMMAND}\n"
 
+  # Create the file with the cron contents
   echo -e "$CRON_COMMAND" >"${cronFilePath}${cronFile}"
+
+  # 644 because cron.d requires files to be that
   chmod 644 "${cronFilePath}${cronFile}"
 
   if [[ -f "${cronFilePath}${cronFile}" ]]; then
