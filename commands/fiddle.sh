@@ -6,10 +6,6 @@ fiddle() {
 
   local absoluteConfigDir=$(getAbsoluteConfigDir "${backupName}")
 
-  cron=$(getConfigValue "${absoluteConfigDir}" "cron")
-
-  if [[ -z "${cron}" ]]; then
-    echo empty
-  fi
+  getConfigValue "${absoluteConfigDir}" cron
 
 }

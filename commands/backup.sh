@@ -5,26 +5,26 @@ backup() {
   backupName="${1}"
 
   if [[ -z "${backupName}" ]]; then
-    logError "No name provided"
+    error "No name provided"
     exit 1
   fi
 
   # Absolute path
   absoluteConfigDir=$(getAbsoluteConfigDir "${backupName}")
 
-  if [[ $? -ne 0 ]]; then
-    logError "Couldnt find config directory with name '${backupName}'"
+  if [[ -z "${absoluteConfigDir}" ]]; then
+    error "Couldnt find config directory with name '${backupName}'"
     exit 1
   fi
 
-  setlogfile $absoluteConfigDir
+  setlogfile "${absoluteConfigDir}"
 
   log "Starting backup ${backupName}"
 
-  HAS_ANY_ERROR=false
+  export HAS_ANY_ERROR=false
 
   ## BEFORE-ALL HOOKS ##
-  runHooks "${backupName}" "before-all" "${HAS_ANY_ERROR}"
+  runHooks "${backupName}" "before-all"
 
   if [[ $? -ne 0 ]]; then
     logError "before-all give a non-zero exit code"
@@ -32,10 +32,10 @@ backup() {
   fi
 
   # Fetch the target ssh host
-  local TARGET_HOST=$(getConfigValue $absoluteConfigDir host)
+  local TARGET_HOST=$(getConfigValue $absoluteConfigDir "host")
 
   ## BEFORE-RSYNC HOOKS ##
-  runHooks $backupName "before-rsync" "${HAS_ANY_ERROR}"
+  runHooks $backupName "before-rsync"
 
   if [[ $? -ne 0 ]]; then
     logError "before-rsync give a non-zero exit code"
@@ -53,14 +53,14 @@ backup() {
   bash -c "${RSYNC_COMMAND}"
 
   if [ $? -ne 0 ]; then
-    HAS_ANY_ERROR=true
+    export HAS_ANY_ERROR=true
     log "rsync command had an error"
   else
     log "rsync success"
   fi
 
   ## AFTER-RSYNC HOOKS ##
-  runHooks $backupName "after-rsync" "${HAS_ANY_ERROR}"
+  runHooks $backupName "after-rsync"
 
   if [[ $? -ne 0 ]]; then
     logError "after-rsync give a non-zero exit code"
@@ -71,7 +71,7 @@ backup() {
   ## RDIFF ##
   ###########
 
-  local RDIFF_TARGET_DIRECTORY=$(getConfigValue $absoluteConfigDir rdiff.target)
+  local RDIFF_TARGET_DIRECTORY=$(getConfigValue $absoluteConfigDir "rdiff_target")
   local RDIFF_COMMAND=$(buildRdiffCommand "${absoluteConfigDir}")
 
   # If the diff target does not exist, create it
@@ -84,21 +84,21 @@ backup() {
   bash -c "${RDIFF_COMMAND}"
 
   if [ $? -ne 0 ]; then
-    HAS_ANY_ERROR=true
+    export HAS_ANY_ERROR=true
     log "rdiff command had an error"
   else
     log "rdiff success"
   fi
 
   ## AFTER-RDIFF HOOKS ##
-  runHooks $backupName "after-rdiff" "${HAS_ANY_ERROR}"
+  runHooks $backupName "after-rdiff"
 
   if [[ $? -ne 0 ]]; then
     logError "after-rdiff hook give a non-zero exit code"
     exit $?
   fi
 
-  local MAIL_TO=$(getConfigValue $absoluteConfigDir mail.to)
+  local MAIL_TO=$(getConfigValue $absoluteConfigDir "mail_to")
 
   ###########
   ## EMAIL ##
@@ -119,7 +119,7 @@ backup() {
     fi
 
     ## BEFORE-MAIL HOOKS ##
-    runHooks "${backupName}" "before-mail" "${HAS_ANY_ERROR}"
+    runHooks "${backupName}" "before-mail"
 
     if [[ $? -ne 0 ]]; then
       logError "before-mail give a non-zero exit code"
@@ -131,7 +131,7 @@ backup() {
     echo -e "${MAIL_CONTENTS}" | mutt -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
 
     ## AFTER-MAIL HOOKS ##
-    runHooks "${backupName}" "after-mail" "${HAS_ANY_ERROR}"
+    runHooks "${backupName}" "after-mail"
 
     if [[ $? -ne 0 ]]; then
       logError "after-mail give a non-zero exit code"
@@ -140,7 +140,7 @@ backup() {
   fi
 
   ## AFTER-ALL HOOKS ##
-  runHooks "${backupName}" "after-all" "${HAS_ANY_ERROR}"
+  runHooks "${backupName}" "after-all"
 
   if [[ $? -ne 0 ]]; then
     logError "after-all give a non-zero exit code"

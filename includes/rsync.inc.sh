@@ -4,8 +4,8 @@ buildRsyncCommand() {
 
   absoluteConfigDir="${1}"
 
-  local RSYNC_ARGS=$(getConfigValue "${absoluteConfigDir}" "rsync.args")
-  local RSYNC_TARGET_DIRECTORY=$(getConfigValue "${absoluteConfigDir}" "rsync.target")
+  local RSYNC_ARGS=$(getConfigValue "${absoluteConfigDir}" "rsync_args")
+  local RSYNC_TARGET_DIRECTORY=$(getConfigValue "${absoluteConfigDir}" "rsync_target")
   local HOST=$(getConfigValue "${absoluteConfigDir}" "host")
 
   # Append the include list arg

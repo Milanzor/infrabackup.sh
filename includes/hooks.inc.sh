@@ -4,7 +4,6 @@ runHooks() {
 
   absoluteConfigDir=$(getAbsoluteConfigDir "${1}")
   hookType="${2}"
-  HAS_ANY_ERROR="${3}"
 
   local returnValue=0
 

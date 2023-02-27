@@ -3,25 +3,18 @@
 getConfigValue() {
 
   local absoluteConfigDir="${1}"
-  local configKey="${2}"
-  local configFile="${absoluteConfigDir}config.json"
-  local CFG="$(cat $configFile)"
-  configValue=$(cat "$configFile" | jq -r '.'${configKey})
+  local key="${2}"
 
-  if [[ "${configValue}" = "null" ]]; then
-    configValue=""
+
+  # Source the config
+  source "${absoluteConfigDir}config"
+  
+  if [[ -v CONFIG ]]; then
+    error "No config array set in ${absoluteConfigDir}config"
+    exit 1
   fi
 
-  echo -e "${configValue}"
-}
-
-hasConfigKey() {
-
-  local configFile="${absoluteConfigDir}config.json"
-  local CFG="$(<$configFile)"
-  echo "has(\"${2}\")"
-  echo "$CFG"
-  echo "$CFG" | jq -r $(echo "has(\"${2}\")")
+  echo -e "${CONFIG[${key}]}"
 }
 
 getAbsoluteConfigDir() {

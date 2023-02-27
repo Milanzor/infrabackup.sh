@@ -23,6 +23,7 @@ source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/help.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/show.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/backup.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/cron.sh"
+source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/create.sh"
 
 case $1 in
 
@@ -46,8 +47,8 @@ backup)
   backup $2
   exit $?
   ;;
-new)
-  new
+create)
+  create $2
   exit $?
   ;;
 *)

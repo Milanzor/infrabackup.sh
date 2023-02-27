@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+declare -A CONFIG
+
+CONFIG[cron]=""
+
+# Rsync
+CONFIG[rsync_args]=""
+CONFIG[rsync_target]=""
+
+# Rdiff
+CONFIG[rdiff_args]=""
+CONFIG[rdiff_target]=""
+
+# Mail
+CONFIG[mail_to]=""
+
+# Log
+CONFIG[log_directory]=""
