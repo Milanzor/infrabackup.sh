@@ -2,6 +2,16 @@
 
 backup() {
 
+  $(validateSystem >/dev/null)
+  validateSystemExitCode=$?
+
+  if [[ "${validateSystemExitCode}" -ne 0 ]]; then
+    error "System does not meet infrabackup requirements, run infrabackup validate-system for more information."
+    exit 1
+  fi
+
+
+
   backupName="${1}"
 
   if [[ -z "${backupName}" ]]; then
@@ -73,6 +83,11 @@ backup() {
 
   local RDIFF_TARGET_DIRECTORY=$(getConfigValue $absoluteConfigDir "rdiff_target")
   local RDIFF_COMMAND=$(buildRdiffCommand "${absoluteConfigDir}")
+
+  if [[ -z "${RDIFF_COMMAND}" ]]; then
+    logError "building the rdiff command failed, please check your config and verify rdiff-backup has been installed"
+    exit $?
+  fi
 
   # If the diff target does not exist, create it
   if [[ ! -d "${RDIFF_TARGET_DIRECTORY}" ]]; then

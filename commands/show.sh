@@ -46,27 +46,49 @@ show() {
       willNotSendEmailReason=", mutt not installed"
     fi
 
+    excludeList=
+    warnAboutIncludeList=false
+
+    if [[ -f "${absoluteConfigDir}include.list" ]]; then
+
+      if [[ -z $(cat "${absoluteConfigDir}include.list") ]]; then
+        includeList=$(error "${absoluteConfigDir}include.list is empty! Rsync will sync the whole server!")
+
+      else
+        includeList="${absoluteConfigDir}include.list"
+      fi
+
+    else
+      includeList=$(error "${absoluteConfigDir}include.list does not exist. Rsync will sync the whole server!")
+    fi
+
+    if [[ -f "${absoluteConfigDir}exclude.list" ]]; then
+      excludeList="${absoluteConfigDir}exclude.list"
+    fi
+
     echo
     echo "${backupName}"
     echo
-    echo "# HOST"
-    echo "Host:           ${host}"
+    echo "Host:                 ${host}"
+    echo "Cron schedule:        ${cron}"
+    echo "Cron enabled:         ${cronIsEnabled}"
     echo
-    echo "# CRON"
-    echo "Cron schedule:  ${cron}"
-    echo "Cron enabled:   ${cronIsEnabled}"
+    echo "Will email:           ${willSendEmails}${willNotSendEmailReason}"
+    echo "Mail receiver:        ${mailTo}"
     echo
-    echo "# MAIL"
-    echo "Will email:     ${willSendEmails}${willNotSendEmailReason}"
-    echo "Mail receiver:  ${mailTo}"
+    echo "Rsync target:         ${rsyncTarget}"
+    echo "Rsync args:           ${rsyncArgs}"
+    echo "Rsync include list:   ${includeList}"
+
+    if [[ "${warnAboutIncludeList}" = "true" ]]; then
+      warn "Rsync include list is empty!"
+    fi
+
+    echo "Rsync exclude list:   ${excludeList}"
+
     echo
-    echo "# RSYNC"
-    echo "Rsync target:   ${rsyncTarget}"
-    echo "Rsync args:     ${rsyncArgs}"
-    echo
-    echo "# RDIFF"
-    echo "Rdiff target:   ${rdiffTarget}"
-    echo "Rdiff args:     ${rdiffArgs}"
+    echo "Rdiff target:         ${rdiffTarget}"
+    echo "Rdiff args:           ${rdiffArgs}"
     echo
 
   done

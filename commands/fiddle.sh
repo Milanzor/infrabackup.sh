@@ -2,10 +2,10 @@
 
 fiddle() {
 
-  backupName="${1}"
-
-  local absoluteConfigDir=$(getAbsoluteConfigDir "${backupName}")
-
-  getConfigValue "${absoluteConfigDir}" cron
+  if [[ $(systemHasRdiffBackupInstalled) = "false" ]]; then
+    echo Installed
+  else
+    echo Not installed
+  fi
 
 }

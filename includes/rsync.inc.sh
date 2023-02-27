@@ -26,3 +26,18 @@ buildRsyncCommand() {
 
   echo "mkdir -p ${RSYNC_TARGET_DIRECTORY} && rsync ${RSYNC_ARGS} ${HOST}/ ${RSYNC_TARGET_DIRECTORY} 2>&1 | tee -a ${LOGFILE}"
 }
+
+systemHasRsyncInstalled() {
+
+  # Test if the system has rsync installed
+  rsync --version >/dev/null 2>&1
+  HAS_RSYNC=$?
+
+  if [[ $HAS_RSYNC -ne 0 ]]; then
+    echo "false"
+    exit 1
+  fi
+
+  echo "true"
+  exit 0
+}

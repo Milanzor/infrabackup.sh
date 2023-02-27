@@ -24,6 +24,7 @@ source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/show.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/backup.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/cron.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/create.sh"
+source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/validate-system.sh"
 
 case $1 in
 
@@ -49,6 +50,10 @@ backup)
   ;;
 create)
   create $2
+  exit $?
+  ;;
+"validate-system")
+  validateSystem
   exit $?
   ;;
 *)
