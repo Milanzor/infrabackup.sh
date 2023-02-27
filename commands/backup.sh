@@ -111,10 +111,10 @@ backup() {
   if [[ $HAS_MUTT -eq 0 && ! -z "${MAIL_TO}" ]]; then
 
     if [[ "$HAS_ANY_ERROR" == true ]]; then
-      local MAIL_SUBJECT="Infrabackup ${configId} finished with errors"
+      local MAIL_SUBJECT="Infrabackup ${backupName} finished with errors"
       local MAIL_CONTENTS="Please check the log."
     else
-      local MAIL_SUBJECT="Infrabackup ${configId} finished successfully"
+      local MAIL_SUBJECT="Infrabackup ${backupName} finished successfully"
       local MAIL_CONTENTS="Nothing to see here!"
     fi
 
