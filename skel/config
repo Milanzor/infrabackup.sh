@@ -2,7 +2,11 @@
 
 declare -A CONFIG
 
+# Cron
 CONFIG[cron]=""
+
+# Host
+CONFIG[host]=""
 
 # Rsync
 CONFIG[rsync_args]=""
