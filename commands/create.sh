@@ -30,11 +30,15 @@ create() {
   # Copy the skeleton to the new directory
   cp -a "${INFRABACKUP_INSTALLATION_DIRECTORY}/skel/." "${absoluteConfigDir}"
 
-  success "Done!"
   success "Backup config created at ${absoluteConfigDir}"
-  success "Please go and fill in the config include and exclude lists"
-  success "After that, you can use ./infrabackup backup ${backupName} to run the backup"
-  success "And ./infrabackup cron enable ${backupName} to install the cronjob"
+  echo 
+  msg "Usage:"
+  msg "./infrabackup backup ${backupName} # To run the backup"
+  msg "./infrabackup cron enable ${backupName} # To install the cronjob"
+  echo
+  warn "#############################################################"
+  warn "# Important! Fill the config, include.list and exclude.list #"
+  warn "#############################################################"
   echo
   success "Good luck!"
 
