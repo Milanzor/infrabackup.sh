@@ -20,11 +20,8 @@ CONFIG[mail_to]="webmaster@vastgoedflow.nl"
 
 # TODO
 
-- infrabackup show => Show more details
-- infrabackup new => Build a new config
 - infrabackup purge => Purge rdiff backups older than <config var> + log files too
 - infrabackup restore => Restore stuff
-- hooks => use EXPORT
 
 # DONE
 
@@ -32,3 +29,6 @@ CONFIG[mail_to]="webmaster@vastgoedflow.nl"
 - infrabackup cron disable
 - infrabackup backup $backupName
 - infrabackup show
+- infrabackup create => Build a new config
+- infrabackup show => Show more details
+- hooks => use EXPORT
