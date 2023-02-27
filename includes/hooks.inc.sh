@@ -26,7 +26,7 @@ runHooks() {
     # Execute the file
     "${FILE}" "${HAS_ANY_ERROR}" | tee -a "${LOGFILE}"
 
-    exitCode=$?
+    exitCode=${PIPESTATUS[0]}
 
     if [[ "${exitCode}" -ne 0 ]]; then
       logError "Non-zero (${exitCode}) exit code received from ${hookType} hook: ${FILE}"
