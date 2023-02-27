@@ -17,7 +17,8 @@ create() {
     exit 1
   fi
 
-  absoluteConfigDir="${INFRABACKUP_INSTALLATION_DIRECTORY}/configs/${backupName}/"
+  # No trailing slash
+  absoluteConfigDir="${INFRABACKUP_INSTALLATION_DIRECTORY}/configs/${backupName}"
 
   mkdir "${absoluteConfigDir}"
 
@@ -27,8 +28,9 @@ create() {
   fi
 
   # Copy the skeleton to the new directory
-  rsync -a "${INFRABACKUP_INSTALLATION_DIRECTORY}/skel/" "${absoluteConfigDir}"
+  cp -a "${INFRABACKUP_INSTALLATION_DIRECTORY}/skel/." "${absoluteConfigDir}"
 
+  success "Done!"
   success "Backup config created at ${absoluteConfigDir}"
   success "Please go and fill in the config include and exclude lists"
   success "After that, you can use ./infrabackup backup ${backupName} to run the backup"
