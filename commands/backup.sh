@@ -103,7 +103,12 @@ backup() {
   ###########
   ## EMAIL ##
   ###########
-  if [[ ! -z "${MAIL_TO}" ]]; then
+
+  # Test if the system has MUTT
+  mutt -h >/dev/null 2>&1
+  HAS_MUTT=$?
+
+  if [[ $HAS_MUTT -eq 0 && ! -z "${MAIL_TO}" ]]; then
 
     if [[ "$HAS_ANY_ERROR" == true ]]; then
       local MAIL_SUBJECT="Infrabackup ${configId} finished with errors"
@@ -121,8 +126,7 @@ backup() {
       exit $?
     fi
 
-    # TODO
-#    echo -e "${MAIL_CONTENTS}" | mutt -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
+    echo -e "${MAIL_CONTENTS}" | mutt -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
 
     ## AFTER-MAIL HOOKS ##
     runHooks "${backupName}" "after-mail" "${HAS_ANY_ERROR}"
