@@ -9,7 +9,7 @@ configs/flow.infra.vastgoedflow.nl/config.json
 
 ```json
 {
-  "cron": "0 10 * * * *",
+  "cron": "*/5 * * * *",
   "host": "",
   "rsync": {
     "args": "-arv --inplace --delete --stats",
@@ -21,10 +21,6 @@ configs/flow.infra.vastgoedflow.nl/config.json
   },
   "mail": {
     "to": "webmaster@vastgoedflow.nl"
-  },
-  "webhook": {
-    "before": "https://localhost",
-    "after": "https://localhost"
   }
 }
 
