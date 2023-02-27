@@ -29,11 +29,13 @@ configs/flow.infra.vastgoedflow.nl/config.json
 
 # TODO
 
-infrabackup cron enable
-infrabackup cron disable
-infrabackup validate
+- infrabackup install
+- infrabackup validate
+- Fix mail
 
 # DONE
 
-infrabackup backup $backupName
-infrabackup show
+- infrabackup cron enable
+- infrabackup cron disable
+- infrabackup backup $backupName
+- infrabackup show
