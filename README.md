@@ -1,10 +1,3 @@
-# Directories
-
-configs/
-configs/flow.infra.vastgoedflow.nl/include.list
-configs/flow.infra.vastgoedflow.nl/exclude.list
-configs/flow.infra.vastgoedflow.nl/config.json
-
 # config.json
 
 ```json
