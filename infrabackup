@@ -29,6 +29,7 @@ source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/create.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/validate-system.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/install.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/uninstall.sh"
+source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/restore.sh"
 
 case $1 in
 
@@ -54,6 +55,10 @@ backup)
   ;;
 purge)
   purge $2
+  exit $?
+  ;;
+restore)
+  restore $2 $3 $4 $5
   exit $?
   ;;
 create)

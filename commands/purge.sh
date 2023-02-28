@@ -77,12 +77,7 @@ purge() {
   ## EMAIL ##
   ###########
 
-  # Test if the system has MUTT
-  # TODO MAKE FUNCTION
-  mutt -h >/dev/null 2>&1
-  HAS_MUTT=$?
-
-  if [[ $HAS_MUTT -eq 0 && ! -z "${MAIL_TO}" ]]; then
+  if [[ $(systemCanSendEmails) = "true" && ! -z "${MAIL_TO}" ]]; then
 
     if [[ "$HAS_ANY_ERROR" == true ]]; then
       local MAIL_SUBJECT="Infrabackup purge ${backupName} finished with errors"
