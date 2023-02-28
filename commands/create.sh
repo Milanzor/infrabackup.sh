@@ -27,11 +27,14 @@ create() {
     exit 1
   fi
 
+  # TODO I can probably use rsync for this with an exclude of empty files
   # Copy the skeleton to the new directory
   cp -a "${INFRABACKUP_INSTALLATION_DIRECTORY}/skel/." "${absoluteConfigDir}"
+  # Clean up empty files
+  find "${absoluteConfigDir}/hooks" -type f -exec rm {} \;
 
   success "Backup config created at ${absoluteConfigDir}"
-  echo 
+  echo
   msg "Usage:"
   msg "./infrabackup backup ${backupName} # To run the backup"
   msg "./infrabackup cron enable ${backupName} # To install the cronjob"

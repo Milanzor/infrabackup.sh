@@ -3,21 +3,21 @@
 declare -A CONFIG
 
 # Cron
-CONFIG[cron]=""
+CONFIG[cron]="* * * * *"
 
 # Host
-CONFIG[host]=""
+CONFIG[host]="your-target-server"
 
 # Rsync
-CONFIG[rsync_args]=""
-CONFIG[rsync_target]=""
+CONFIG[rsync_args]="-arv --inplace --delete --stats"
+CONFIG[rsync_target]="/path/to/your/backups/rsync/"
 
 # Rdiff
-CONFIG[rdiff_args]=""
-CONFIG[rdiff_target]=""
+CONFIG[rdiff_args]="-v5 --print-statistics --exclude-device-files --exclude-fifos --exclude-sockets --preserve-numerical-ids --exclude-other-filesystems"
+CONFIG[rdiff_target]="/path/to/your/backups/rsync/"
 
 # Mail
 CONFIG[mail_to]=""
 
 # Log
-CONFIG[log_directory]=""
+CONFIG[log_directory]="/path/to/your/backups/logs/"

@@ -17,6 +17,9 @@ show() {
     local rsyncArgs=$(getConfigValue "${absoluteConfigDir}" "rsync_args")
     local rdiffTarget=$(getConfigValue "${absoluteConfigDir}" "rdiff_target")
     local rdiffArgs=$(getConfigValue "${absoluteConfigDir}" "rdiff_args")
+    local rdiffRemoveOlderThan=$(getConfigValue "${absoluteConfigDir}" "rdiff_remove_older_than")
+    local rdiff_purge_cron=$(getConfigValue "${absoluteConfigDir}" "rdiff_purge_cron")
+
     local mailTo=$(getConfigValue "${absoluteConfigDir}" "mail_to")
 
     local cron=$(getConfigValue "${absoluteConfigDir}" "cron")
@@ -24,26 +27,28 @@ show() {
     local cronIsEnabled=false
 
     if [[ -L "/etc/cron.d/${cronFile}" ]]; then
-      local cronIsEnabled="true, /etc/cron.d/${cronFile}"
+      local cronIsEnabled="true, /etc/cron.d/${cronFile} ($(warn "contents not verified"))"
     fi
 
     # Test if the system has MUTT
+    # TODO MAKE FUNCTION
     mutt -h >/dev/null 2>&1
     HAS_MUTT=$?
 
+    # TODO CLEANUP
     willSendEmails=false
     if [[ $HAS_MUTT -eq 0 ]]; then
 
       if [[ -z "${mailTo}" ]]; then
-        willNotSendEmailReason=", mutt installed but CONFIG[mail_to] is empty or not set"
+        willNotSendEmailReason=$(warn ", mutt installed but CONFIG[mail_to] is empty or not set")
       else
-        willNotSendEmailReason=", mutt installed and CONFIG[mail_to] set"
+        willNotSendEmailReason=$(warn ", mutt installed and CONFIG[mail_to] set")
         willSendEmails=true
       fi
 
     else
 
-      willNotSendEmailReason=", mutt not installed"
+      willNotSendEmailReason=$(warn ", mutt not installed")
     fi
 
     excludeList=
@@ -69,26 +74,29 @@ show() {
     echo
     echo "${backupName}"
     echo
-    echo "Host:                 ${host}"
-    echo "Cron schedule:        ${cron}"
-    echo "Cron enabled:         ${cronIsEnabled}"
+    echo "Host:                     $(warn "${host}")"
     echo
-    echo "Will email:           ${willSendEmails}${willNotSendEmailReason}"
-    echo "Mail receiver:        ${mailTo}"
-    echo
-    echo "Rsync target:         ${rsyncTarget}"
-    echo "Rsync args:           ${rsyncArgs}"
-    echo "Rsync include list:   ${includeList}"
+    echo "Rsync target:             ${rsyncTarget}"
+    echo "Rsync args:               ${rsyncArgs}"
+    echo "Rsync include list:       ${includeList}"
 
     if [[ "${warnAboutIncludeList}" = "true" ]]; then
       warn "Rsync include list is empty!"
     fi
 
-    echo "Rsync exclude list:   ${excludeList}"
+    echo "Rsync exclude list:       ${excludeList}"
 
     echo
-    echo "Rdiff target:         ${rdiffTarget}"
-    echo "Rdiff args:           ${rdiffArgs}"
+    echo "Rdiff target:             ${rdiffTarget}"
+    echo "Rdiff remove older than:  $(info "${rdiffRemoveOlderThan}")"
+    echo "Rdiff args:               ${rdiffArgs}"
+    echo
+    echo "Cron schedule (backup):   $(info "${cron}")"
+    echo "Cron schedule (purge):    $(info "${rdiff_purge_cron}")"
+    echo "Cron enabled:             ${cronIsEnabled}"
+    echo
+    echo "Will email:               ${willSendEmails}${willNotSendEmailReason}"
+    echo "Mail receiver:            ${mailTo}"
     echo
 
   done

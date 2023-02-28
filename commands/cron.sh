@@ -62,7 +62,7 @@ cronEnable() {
   ln -s "${cronFilePath}${cronFile}" "/etc/cron.d/${cronFile}"
 
   if [[ $? -ne 0 ]]; then
-    error "Couldnt install cron symlink"
+    error "Failed to install cron symlink"
     exit 1
   fi
 
@@ -72,6 +72,7 @@ cronEnable() {
 }
 
 cronDisable() {
+
   local absoluteConfigDir="${1}"
 
   local cronFile=$(getCronFileName "${absoluteConfigDir}")
@@ -96,7 +97,7 @@ _buildCronFile() {
 
   local absoluteConfigDir="${1}"
 
-  CRON_SCHEDULE=$(getConfigValue $absoluteConfigDir "cron")
+  local CRON_SCHEDULE=$(getConfigValue $absoluteConfigDir "cron")
 
   if [[ -z "${CRON_SCHEDULE}" ]]; then
     error "No cron set in config.json"
@@ -111,16 +112,27 @@ _buildCronFile() {
     mkdir -p "${cronFilePath}"
   fi
 
-  CRON_COMMAND="# DO NOT MANUALLY EDIT THIS FILE\n"
-  CRON_COMMAND="${CRON_COMMAND}# THIS FILE WAS CREATED WITH INFRABACKUP (${INFRABACKUP_INSTALLATION_DIRECTORY})\n"
-  CRON_COMMAND="${CRON_COMMAND}${CRON_SCHEDULE}"
-  #  CRON_COMMAND="${CRON_COMMAND}* * * * *"
-  CRON_COMMAND="${CRON_COMMAND} root"
-  CRON_COMMAND="${CRON_COMMAND} ${INFRABACKUP_INSTALLATION_DIRECTORY}/"
-  CRON_COMMAND="${CRON_COMMAND}infrabackup \"backup\" \"${backupName}\" >/dev/null 2>&1"
+  local CRON_COMMAND="# DO NOT MANUALLY EDIT THIS FILE\n"
+  local CRON_COMMAND="${CRON_COMMAND}# THIS FILE WAS CREATED WITH INFRABACKUP (${INFRABACKUP_INSTALLATION_DIRECTORY})\n"
+  local CRON_COMMAND="${CRON_COMMAND}${CRON_SCHEDULE}"
+  local CRON_COMMAND="${CRON_COMMAND} root"
+  local CRON_COMMAND="${CRON_COMMAND} ${INFRABACKUP_INSTALLATION_DIRECTORY}/"
+  local CRON_COMMAND="${CRON_COMMAND}infrabackup \"backup\" \"${backupName}\" >/dev/null 2>&1"
+
+  # Rdiff purge cron
+
+  local RDIFF_PURGE_CRON_SCHEDULE=$(getConfigValue $absoluteConfigDir "rdiff_purge_cron")
+  if [[ ! -z "${RDIFF_PURGE_CRON_SCHEDULE}" ]]; then
+    local CRON_COMMAND="${CRON_COMMAND}\n"
+    local CRON_COMMAND="${CRON_COMMAND}${RDIFF_PURGE_CRON_SCHEDULE}"
+    local CRON_COMMAND="${CRON_COMMAND} root"
+    local CRON_COMMAND="${CRON_COMMAND} ${INFRABACKUP_INSTALLATION_DIRECTORY}/"
+    local CRON_COMMAND="${CRON_COMMAND}infrabackup \"purge\" \"${backupName}\" >/dev/null 2>&1"
+
+  fi
 
   # End with a newline
-  CRON_COMMAND="${CRON_COMMAND}\n"
+  local CRON_COMMAND="${CRON_COMMAND}\n"
 
   # Create the file with the cron contents
   echo -e "$CRON_COMMAND" >"${cronFilePath}${cronFile}"

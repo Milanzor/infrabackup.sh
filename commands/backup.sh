@@ -10,8 +10,6 @@ backup() {
     exit 1
   fi
 
-
-
   backupName="${1}"
 
   if [[ -z "${backupName}" ]]; then
@@ -27,7 +25,7 @@ backup() {
     exit 1
   fi
 
-  setlogfile "${absoluteConfigDir}"
+  setlogfile "${absoluteConfigDir}" "backup"
 
   log "Starting backup ${backupName}"
 
@@ -60,6 +58,11 @@ backup() {
 
   local RSYNC_COMMAND=$(buildRsyncCommand "${absoluteConfigDir}")
 
+  if [[ -z "${RSYNC_COMMAND}" ]]; then
+    logError "Failed building the rsync command. Please check your config (infrabackup show) and validate your system (infrabackup validate-system)"
+    exit $?
+  fi
+
   bash -c "${RSYNC_COMMAND}"
 
   if [ $? -ne 0 ]; then
@@ -85,7 +88,7 @@ backup() {
   local RDIFF_COMMAND=$(buildRdiffCommand "${absoluteConfigDir}")
 
   if [[ -z "${RDIFF_COMMAND}" ]]; then
-    logError "building the rdiff command failed, please check your config and verify rdiff-backup has been installed"
+    logError "Failed building the rdiff-backup command. Please check your config (infrabackup show) and validate your system (infrabackup validate-system)"
     exit $?
   fi
 
@@ -120,6 +123,7 @@ backup() {
   ###########
 
   # Test if the system has MUTT
+  # TODO MAKE FUNCTION
   mutt -h >/dev/null 2>&1
   HAS_MUTT=$?
 

@@ -58,12 +58,18 @@ logError() {
 setlogfile() {
 
   absoluteConfigDir="${1}"
+  suffix="${2}"
 
   LOG_DIRECTORY=$(getConfigValue $absoluteConfigDir "log_directory")
 
   if [[ -z "${LOG_DIRECTORY}" ]]; then
     error "Target log directory is empty, please check your config"
     exit 1
+  fi
+
+  # If we passed a suffix, add a dash infront for readability
+  if [[ ! -z "${suffix}" ]]; then
+    suffix="-${suffix}"
   fi
 
   # Random 5 character string
@@ -76,7 +82,7 @@ setlogfile() {
     mkdir -p "${LOG_DIRECTORY}"
   fi
 
-  LOGFILE="${LOG_DIRECTORY}$(date +%Y%m%d%H%M)-${runId}.log"
+  LOGFILE="${LOG_DIRECTORY}$(date +%Y%m%d%H%M)${suffix}-${runId}.log"
 
   log "Logging to ${LOGFILE}"
 }

@@ -7,6 +7,11 @@ runHooks() {
 
   local returnValue=0
 
+  if [[ ! -d "${absoluteConfigDir}hooks/${hookType}/" ]]; then
+    log "Skipping hook ${hookType}, no hooks found"
+    return $returnValue
+  fi
+
   hookFiles=$(find "${absoluteConfigDir}hooks/${hookType}/" -maxdepth 1 -mindepth 1 -type f)
 
   while read FILE; do

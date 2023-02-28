@@ -22,6 +22,7 @@ source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/fiddle.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/help.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/show.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/backup.sh"
+source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/purge.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/cron.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/create.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/validate-system.sh"
@@ -46,6 +47,10 @@ fiddle)
   ;;
 backup)
   backup $2
+  exit $?
+  ;;
+purge)
+  purge $2
   exit $?
   ;;
 create)

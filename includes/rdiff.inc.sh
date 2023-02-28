@@ -18,6 +18,42 @@ buildRdiffCommand() {
   echo "mkdir -p ${RDIFF_TARGET_DIRECTORY} && rdiff-backup ${RDIFF_ARGS} ${SOURCE_DIRECTORY} ${RDIFF_TARGET_DIRECTORY} 2>&1 | tee -a ${LOGFILE}"
 }
 
+buildRdiffListIncrementsCommand() {
+
+  if [[ $(systemHasRdiffBackupInstalled) = "false" ]]; then
+    exit 1
+  fi
+
+  local absoluteConfigDir="${1}"
+
+  local RDIFF_ARGS="--list-increments"
+
+  local RDIFF_TARGET_DIRECTORY=$(getConfigValue "${absoluteConfigDir}" "rdiff_target")
+
+  echo "rdiff-backup ${RDIFF_ARGS} ${RDIFF_TARGET_DIRECTORY} 2>&1 | tee -a ${LOGFILE}"
+}
+
+buildRdiffPurgeCommand() {
+
+  if [[ $(systemHasRdiffBackupInstalled) = "false" ]]; then
+    exit 1
+  fi
+
+  local absoluteConfigDir="${1}"
+  local REMOVE_OLDER_THAN=$(getConfigValue "${absoluteConfigDir}" "rdiff_remove_older_than")
+
+  if [[ -z "${REMOVE_OLDER_THAN}" ]]; then
+    exit 1
+  fi
+
+  # --force to tell rdiff we dont mind removing more than 1 increment
+  local RDIFF_ARGS="-v5 --print-statistics --remove-older-than \"${REMOVE_OLDER_THAN}\" --force"
+
+  local RDIFF_TARGET_DIRECTORY=$(getConfigValue "${absoluteConfigDir}" "rdiff_target")
+
+  echo "rdiff-backup ${RDIFF_ARGS} ${RDIFF_TARGET_DIRECTORY} 2>&1 | tee -a ${LOGFILE}"
+}
+
 systemHasRdiffBackupInstalled() {
 
   # Test if the system has rdiff-backup installed

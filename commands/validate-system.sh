@@ -20,7 +20,6 @@ validateSystem() {
   mutt -h >/dev/null 2>&1
   HAS_MUTT=$?
 
-  # Mutt not installed
   if [[ "${HAS_MUTT}" -eq 0 ]]; then
     success "mutt:\t\tInstalled"
   else

@@ -2,10 +2,11 @@
 
 fiddle() {
 
-  if [[ $(systemHasRdiffBackupInstalled) = "false" ]]; then
-    echo Installed
-  else
-    echo Not installed
-  fi
+
+  # Absolute path
+  absoluteConfigDir=$(getAbsoluteConfigDir "milan.test")
+
+buildRdiffPurgeCommand "${absoluteConfigDir}"
+buildRdiffListIncrementsCommand "${absoluteConfigDir}"
 
 }
