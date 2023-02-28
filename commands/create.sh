@@ -36,8 +36,8 @@ create() {
   success "Backup config created at ${absoluteConfigDir}"
   echo
   msg "Usage:"
-  msg "./infrabackup backup ${backupName} # To run the backup"
-  msg "./infrabackup cron enable ${backupName} # To install the cronjob"
+  msg "infrabackup backup ${backupName} # To run the backup"
+  msg "infrabackup cron enable ${backupName} # To install the cronjob"
   echo
   warn "#############################################################"
   warn "# Important! Fill the config, include.list and exclude.list #"

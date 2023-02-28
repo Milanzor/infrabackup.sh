@@ -6,8 +6,8 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-# Fetch absolute path to this script
-INFRABACKUP_INSTALLATION_DIRECTORY=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+# Fetch absolute path to this script (works symlinked and not symlinked)
+INFRABACKUP_INSTALLATION_DIRECTORY=$(dirname "$(readlink -f "$0")")
 
 # Initialize the variable for later use
 LOGFILE=
@@ -27,6 +27,8 @@ source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/purge.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/cron.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/create.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/validate-system.sh"
+source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/install.sh"
+source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/uninstall.sh"
 
 case $1 in
 
@@ -56,6 +58,14 @@ purge)
   ;;
 create)
   create $2
+  exit $?
+  ;;
+install)
+  install
+  exit $?
+  ;;
+uninstall)
+  uninstall
   exit $?
   ;;
 "validate-system")

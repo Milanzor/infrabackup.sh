@@ -67,11 +67,9 @@ show() {
     LAST_BACKUP_LOG=$(find "${LOG_DIRECTORY}" -type f -iname "*-backup*" | sort -n | tail -1)
     LAST_PURGE_LOG=$(find "${LOG_DIRECTORY}" -type f -iname "*-purge*" | sort -n | tail -1)
 
-    echo
-    echo "${backupName}"
-    echo
+    echo "###########################################################"
+    echo "Backup configuration for ${backupName}"
     echo "Host:                     $(warn "${host}")"
-    echo
     echo "Rsync target:             ${rsyncTarget}"
     echo "Rsync args:               ${rsyncArgs}"
     echo "Rsync include list:       ${includeList}"
@@ -81,23 +79,18 @@ show() {
     fi
 
     echo "Rsync exclude list:       ${excludeList}"
-
-    echo
     echo "Rdiff target:             ${rdiffTarget}"
     echo "Rdiff purge older than:   $(info "${rdiffRemoveOlderThan}")"
     echo "Rdiff args:               ${rdiffArgs}"
-    echo
     echo "Cron schedule (backup):   $(info "${cron}")"
     echo "Cron schedule (purge):    $(info "${rdiff_purge_cron}")"
     echo "Cron enabled:             ${cronIsEnabled}"
-    echo
     echo "Will email:               ${willSendEmails}${willNotSendEmailReason}"
     echo "Mail receiver:            ${mailTo}"
-
-    echo
     echo "Log directory:            ${LOG_DIRECTORY}"
     echo "Latest backup log:        ${LAST_BACKUP_LOG}"
     echo "Latest purge log:         ${LAST_PURGE_LOG}"
+    echo "###########################################################"
 
   done
 
