@@ -24,31 +24,23 @@ show() {
 
     local cron=$(getConfigValue "${absoluteConfigDir}" "cron")
     local cronFile=$(getCronFileName "${absoluteConfigDir}")
-    local cronIsEnabled=false
+    local cronIsEnabled=$(warn "No")
 
     if [[ -L "/etc/cron.d/${cronFile}" ]]; then
-      local cronIsEnabled="true, /etc/cron.d/${cronFile} ($(warn "contents not verified"))"
+      local cronIsEnabled=$(success "Yes, /etc/cron.d/${cronFile} $(warn "(contents not verified)")")
     fi
 
-    # Test if the system has MUTT
-    # TODO MAKE FUNCTION
-    mutt -h >/dev/null 2>&1
-    HAS_MUTT=$?
-
-    # TODO CLEANUP
-    willSendEmails=false
-    if [[ $HAS_MUTT -eq 0 ]]; then
+    willSendEmails=$(warn "Yes")
+    if [[ $(systemCanSendEmails) = "true" ]]; then
 
       if [[ -z "${mailTo}" ]]; then
-        willNotSendEmailReason=$(warn ", mutt installed but CONFIG[mail_to] is empty or not set")
+        willSendEmails=$(warn "No, system can send emails but CONFIG[mail_to] is empty or not set")
       else
-        willNotSendEmailReason=$(warn ", mutt installed and CONFIG[mail_to] set")
-        willSendEmails=true
+        willSendEmails=$(success "Yes, system can send emails and CONFIG[mail_to] set")
       fi
 
     else
-
-      willNotSendEmailReason=$(warn ", mutt not installed")
+      willSendEmails=$(warn "No, system cannot send emails (see infrabackup validate-system for more information")
     fi
 
     excludeList=
@@ -71,6 +63,10 @@ show() {
       excludeList="${absoluteConfigDir}exclude.list"
     fi
 
+    LOG_DIRECTORY=$(getConfigValue $absoluteConfigDir "log_directory")
+    LAST_BACKUP_LOG=$(find "${LOG_DIRECTORY}" -type f -iname "*-backup*" | sort -n | tail -1)
+    LAST_PURGE_LOG=$(find "${LOG_DIRECTORY}" -type f -iname "*-purge*" | sort -n | tail -1)
+
     echo
     echo "${backupName}"
     echo
@@ -88,7 +84,7 @@ show() {
 
     echo
     echo "Rdiff target:             ${rdiffTarget}"
-    echo "Rdiff remove older than:  $(info "${rdiffRemoveOlderThan}")"
+    echo "Rdiff purge older than:   $(info "${rdiffRemoveOlderThan}")"
     echo "Rdiff args:               ${rdiffArgs}"
     echo
     echo "Cron schedule (backup):   $(info "${cron}")"
@@ -97,7 +93,11 @@ show() {
     echo
     echo "Will email:               ${willSendEmails}${willNotSendEmailReason}"
     echo "Mail receiver:            ${mailTo}"
+
     echo
+    echo "Log directory:            ${LOG_DIRECTORY}"
+    echo "Latest backup log:        ${LAST_BACKUP_LOG}"
+    echo "Latest purge log:         ${LAST_PURGE_LOG}"
 
   done
 
