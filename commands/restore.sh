@@ -74,7 +74,7 @@ restore() {
     exit $?
   fi
   
-  bash -c "${RDIFF_PURGE_COMMAND}"
+  bash -c "${RDIFF_RESTORE_COMMAND}"
 
   if [ $? -ne 0 ]; then
     error "Restore command had an error"
