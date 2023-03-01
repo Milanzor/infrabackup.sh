@@ -73,7 +73,13 @@ restore() {
     error "Failed building the rdiff restore command. Please check your config (infrabackup show) and validate your system (infrabackup validate-system)"
     exit $?
   fi
+  
+  bash -c "${RDIFF_PURGE_COMMAND}"
 
-  echo $RDIFF_RESTORE_COMMAND
+  if [ $? -ne 0 ]; then
+    error "Restore command had an error"
+    return 1
+  fi
+  
   return 0
 }
