@@ -3,6 +3,7 @@
 # Version 1.0 - TODO
 
 - battle test
+- infrabackup test $backupName - Runs a dry run backup to see if everything works
 
 # Version 2.0 - TODO
 - rethink the ./configs directory? Option to pass a directory so we can place configs in other directories?
