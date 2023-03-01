@@ -15,6 +15,8 @@ CONFIG[rsync_target]="/path/to/your/backups/rsync/"
 # Rdiff
 CONFIG[rdiff_args]="-v5 --print-statistics --exclude-device-files --exclude-fifos --exclude-sockets --preserve-numerical-ids --exclude-other-filesystems"
 CONFIG[rdiff_target]="/path/to/your/backups/rsync/"
+CONFIG[rdiff_remove_older_than]="3M"
+CONFIG[rdiff_purge_cron]="30 0 * * 0"
 
 # Mail
 CONFIG[mail_to]=""
