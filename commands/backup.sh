@@ -124,14 +124,6 @@ backup() {
 
   if [[ $(systemCanSendEmails) = "true" && ! -z "${MAIL_TO}" ]]; then
 
-    if [[ "$HAS_ANY_ERROR" == true ]]; then
-      local MAIL_SUBJECT="Infrabackup ${backupName} finished with errors"
-      local MAIL_CONTENTS="Please check the log."
-    else
-      local MAIL_SUBJECT="Infrabackup ${backupName} finished successfully"
-      local MAIL_CONTENTS="Nothing to see here!"
-    fi
-
     ## BEFORE-MAIL HOOKS ##
     runHooks "${backupName}" "before-mail"
 
@@ -141,6 +133,14 @@ backup() {
     fi
 
     log "Sending result email"
+
+    local MAIL_CONTENTS=$(buildEmail "${HAS_ANY_ERROR}" "${backupName}")
+
+    if [[ "$HAS_ANY_ERROR" == true ]]; then
+      local MAIL_SUBJECT="Infrabackup ${backupName} finished with errors"
+    else
+      local MAIL_SUBJECT="Infrabackup ${backupName} finished successfully"
+    fi
 
     echo -e "${MAIL_CONTENTS}" | mutt -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
 
