@@ -21,10 +21,10 @@ buildEmail() {
   backupName="${2}"
 
   if [[ "$HAS_ANY_ERROR" == true ]]; then
-    local text="Infrabackup ${backupName} finished with errors, please refer to the attached log file."
+    local text="Infrabackup '${backupName}' finished with errors, please refer to the attached log file."
     local emoji="❌"
   else
-    local text="Infrabackup ${backupName} finished successfully, nothing to see here!"
+    local text="Infrabackup '${backupName}' finished successfully, nothing to see here!"
     local emoji="✅"
   fi
 
