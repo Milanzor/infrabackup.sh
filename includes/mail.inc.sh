@@ -29,6 +29,7 @@ buildEmail() {
   fi
 
   date=$(date)
+  logo_base64=$(base64 -w 0 "${INFRABACKUP_INSTALLATION_DIRECTORY}/assets/logo.png")
 
   mailContents=$(cat "${INFRABACKUP_INSTALLATION_DIRECTORY}/assets/email.template.html")
 
@@ -36,6 +37,7 @@ buildEmail() {
   mailContents=$(echo "${mailContents}" | sed "s|{{__DATE__}}|$(date)|g")
   mailContents=$(echo "${mailContents}" | sed "s|{{__TEXT__}}|${text}|g")
   mailContents=$(echo "${mailContents}" | sed "s|{{__RESULT_ICON__}}|${emoji}|g")
+  mailContents=$(echo "${mailContents}" | sed "s|{{__LOGO_BASE64__}}|${logo_base64}|g")
 
   echo "${mailContents}"
 

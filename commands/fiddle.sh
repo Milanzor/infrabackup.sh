@@ -7,7 +7,7 @@ fiddle() {
   LOG_DIRECTORY=$(getConfigValue $absoluteConfigDir "log_directory")
 
   backupName="milan.test"
-  HAS_ANY_ERRORS=false
+  HAS_ANY_ERRORS=true
 
   local MAIL_CONTENTS=$(buildEmail "${HAS_ANY_ERRORS}" "${backupName}")
 
