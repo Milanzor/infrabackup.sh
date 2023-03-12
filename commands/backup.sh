@@ -137,9 +137,9 @@ backup() {
     local MAIL_CONTENTS=$(buildEmail "${HAS_ANY_ERROR}" "${backupName}")
 
     if [[ "$HAS_ANY_ERROR" == true ]]; then
-      local MAIL_SUBJECT="Infrabackup ${backupName} finished with errors"
+      local MAIL_SUBJECT="Infrabackup '${backupName}' finished with errors"
     else
-      local MAIL_SUBJECT="Infrabackup ${backupName} finished successfully"
+      local MAIL_SUBJECT="Infrabackup '${backupName}' finished successfully"
     fi
 
     echo -e "${MAIL_CONTENTS}" | mutt -e "set content_type=text/html" -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
