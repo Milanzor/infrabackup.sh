@@ -35,6 +35,7 @@ purge() {
   runHooks "${backupName}" "before-purge"
 
   if [[ $? -ne 0 ]]; then
+    export HAS_ANY_ERROR=true
     logError "before-purge give a non-zero exit code"
   fi
 
@@ -67,7 +68,16 @@ purge() {
 
   if [ $? -ne 0 ]; then
     export HAS_ANY_ERROR=true
-    log "rdiff purge error"
+    logError "rdiff purge error"
+  fi
+
+  ## AFTER-PURGE HOOKS ##
+  runHooks "${backupName}" "after-purge"
+
+  if [[ $? -ne 0 ]]; then
+    export HAS_ANY_ERROR=true
+    logError "after-purge give a non-zero exit code"
+
   fi
 
   local MAIL_TO=$(getConfigValue $absoluteConfigDir "mail_to")
@@ -85,13 +95,6 @@ purge() {
 
     echo -e "${MAIL_CONTENTS}" | mutt -e "set content_type=text/html" -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
 
-  fi
-
-  ## AFTER-PURGE HOOKS ##
-  runHooks "${backupName}" "after-purge"
-
-  if [[ $? -ne 0 ]]; then
-    logError "after-purge give a non-zero exit code"
   fi
 
   return 0

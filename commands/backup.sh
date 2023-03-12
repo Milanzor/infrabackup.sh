@@ -35,6 +35,7 @@ backup() {
   runHooks "${backupName}" "before-all"
 
   if [[ $? -ne 0 ]]; then
+    export HAS_ANY_ERROR=true
     logError "before-all give a non-zero exit code"
   fi
 
@@ -45,6 +46,7 @@ backup() {
   runHooks $backupName "before-rsync"
 
   if [[ $? -ne 0 ]]; then
+    export HAS_ANY_ERROR=true
     logError "before-rsync give a non-zero exit code"
   fi
 
@@ -74,6 +76,7 @@ backup() {
   runHooks $backupName "after-rsync"
 
   if [[ $? -ne 0 ]]; then
+    export HAS_ANY_ERROR=true
     logError "after-rsync give a non-zero exit code"
   fi
 
@@ -109,6 +112,7 @@ backup() {
   runHooks $backupName "after-rdiff"
 
   if [[ $? -ne 0 ]]; then
+    export HAS_ANY_ERROR=true
     logError "after-rdiff hook give a non-zero exit code"
   fi
 
@@ -124,6 +128,7 @@ backup() {
     runHooks "${backupName}" "before-mail"
 
     if [[ $? -ne 0 ]]; then
+      export HAS_ANY_ERROR=true
       logError "before-mail give a non-zero exit code"
     fi
 
@@ -138,6 +143,7 @@ backup() {
     runHooks "${backupName}" "after-mail"
 
     if [[ $? -ne 0 ]]; then
+      export HAS_ANY_ERROR=true
       logError "after-mail give a non-zero exit code"
     fi
   fi
@@ -146,6 +152,7 @@ backup() {
   runHooks "${backupName}" "after-all"
 
   if [[ $? -ne 0 ]]; then
+    export HAS_ANY_ERROR=true
     logError "after-all give a non-zero exit code"
   fi
 
