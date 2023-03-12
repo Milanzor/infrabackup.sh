@@ -36,7 +36,6 @@ backup() {
 
   if [[ $? -ne 0 ]]; then
     logError "before-all give a non-zero exit code"
-    exit $?
   fi
 
   # Fetch the target ssh host
@@ -47,7 +46,6 @@ backup() {
 
   if [[ $? -ne 0 ]]; then
     logError "before-rsync give a non-zero exit code"
-    exit $?
   fi
 
   ###########
@@ -77,7 +75,6 @@ backup() {
 
   if [[ $? -ne 0 ]]; then
     logError "after-rsync give a non-zero exit code"
-    exit $?
   fi
 
   ###########
@@ -113,7 +110,6 @@ backup() {
 
   if [[ $? -ne 0 ]]; then
     logError "after-rdiff hook give a non-zero exit code"
-    exit $?
   fi
 
   local MAIL_TO=$(getConfigValue $absoluteConfigDir "mail_to")
@@ -129,7 +125,6 @@ backup() {
 
     if [[ $? -ne 0 ]]; then
       logError "before-mail give a non-zero exit code"
-      exit $?
     fi
 
     log "Sending result email"
@@ -144,7 +139,6 @@ backup() {
 
     if [[ $? -ne 0 ]]; then
       logError "after-mail give a non-zero exit code"
-      exit $?
     fi
   fi
 
@@ -153,7 +147,6 @@ backup() {
 
   if [[ $? -ne 0 ]]; then
     logError "after-all give a non-zero exit code"
-    exit $?
   fi
 
   return 0

@@ -36,7 +36,6 @@ purge() {
 
   if [[ $? -ne 0 ]]; then
     logError "before-purge give a non-zero exit code"
-    exit $?
   fi
 
   log "Listing rdiff increments"
@@ -93,7 +92,6 @@ purge() {
 
   if [[ $? -ne 0 ]]; then
     logError "after-purge give a non-zero exit code"
-    exit $?
   fi
 
   return 0
