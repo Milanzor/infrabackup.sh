@@ -142,7 +142,7 @@ backup() {
       local MAIL_SUBJECT="Infrabackup ${backupName} finished successfully"
     fi
 
-    echo -e "${MAIL_CONTENTS}" | mutt -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
+    echo -e "${MAIL_CONTENTS}" | mutt -e "set content_type=text/html" -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
 
     ## AFTER-MAIL HOOKS ##
     runHooks "${backupName}" "after-mail"
