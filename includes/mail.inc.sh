@@ -17,9 +17,10 @@ systemCanSendEmails() {
 
 buildEmail() {
 
-  HAS_ANY_ERROR="${1}"
-  backupName="${2}"
-  task="${3}"
+  backupName="${1}"
+  task="${2}"
+  HAS_ANY_ERROR="${3}"
+
 
   if [[ "$HAS_ANY_ERROR" == true ]]; then
     local text="${task} for '${backupName}' finished with errors, please refer to the attached log file."
