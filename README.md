@@ -9,7 +9,6 @@
 - rethink the ./configs directory? Option to pass a directory so we can place configs in other directories?
 - infrabackup health $backupName => Check the health of the backups, see some data, how long backups take etc
 - expand infrabackup validate-system => Check for orphaned cron symlinks and orphaned cron files in ./crons
-- expand mailing features (HTML?)
 - revamp absoluteConfigDir (because its passed around everywhere)
 - expand infrabackup create => Ask questions
 - Specify user that should run the commands?
@@ -27,3 +26,4 @@
 - infrabackup uninstall
 - infrabackup purge $backupName + cron
 - infrabackup restore => Restore stuff
+- expand mailing features (HTML?)
