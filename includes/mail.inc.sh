@@ -19,12 +19,13 @@ buildEmail() {
 
   HAS_ANY_ERROR="${1}"
   backupName="${2}"
+  task="${3}"
 
   if [[ "$HAS_ANY_ERROR" == true ]]; then
-    local text="Infrabackup '${backupName}' finished with errors, please refer to the attached log file."
+    local text="${task} for '${backupName}' finished with errors, please refer to the attached log file."
     local emoji="❌"
   else
-    local text="Infrabackup '${backupName}' finished successfully, nothing to see here!"
+    local text="${task} for '${backupName}' finished successfully, nothing to see here!"
     local emoji="✅"
   fi
 
@@ -41,4 +42,19 @@ buildEmail() {
 
   echo "${mailContents}"
 
+}
+
+buildSubject() {
+
+  backupName="${1}"
+  task="${2}"
+  HAS_ANY_ERROR="${3}"
+
+  if [[ "$HAS_ANY_ERROR" == true ]]; then
+    local MAIL_SUBJECT="${task} for '${backupName}' finished with errors"
+  else
+    local MAIL_SUBJECT="${task} for '${backupName}' finished successfully"
+  fi
+
+  echo "${MAIL_SUBJECT}"
 }

@@ -79,17 +79,12 @@ purge() {
 
   if [[ $(systemCanSendEmails) = "true" && ! -z "${MAIL_TO}" ]]; then
 
-    if [[ "$HAS_ANY_ERROR" == true ]]; then
-      local MAIL_SUBJECT="Infrabackup purge ${backupName} finished with errors"
-      local MAIL_CONTENTS="Please check the log."
-    else
-      local MAIL_SUBJECT="Infrabackup purge ${backupName} finished successfully"
-      local MAIL_CONTENTS="Nothing to see here!"
-    fi
+    local MAIL_CONTENTS=$(buildEmail "${backupName}" "Purge" "${HAS_ANY_ERROR}" )
+    local MAIL_SUBJECT=$(buildSubject "${backupName}" "Purge" "${HAS_ANY_ERROR}" )
 
     log "Sending purge result email"
 
-    echo -e "${MAIL_CONTENTS}" | mutt -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
+    echo -e "${MAIL_CONTENTS}" | mutt -e "set content_type=text/html" -s "${MAIL_SUBJECT}" -a "${LOGFILE}" -- "${MAIL_TO}"
 
   fi
 
