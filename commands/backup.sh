@@ -66,58 +66,59 @@ backup() {
   fi
 
   eval "${RSYNC_COMMAND}"
+  RSYNC_EXIT_CODE=$?
 
-  if [ $? -ne 0 ]; then
+  if [ $RSYNC_EXIT_CODE -ne 0 ]; then
     export HAS_ANY_ERROR=true
     log "rsync command had an error"
   else
     log "rsync success"
+
+    ## AFTER-RSYNC HOOKS ##
+    runHooks $backupName "after-rsync"
+
+    if [[ $? -ne 0 ]]; then
+      export HAS_ANY_ERROR=true
+      logError "after-rsync give a non-zero exit code"
+    fi
+
+    ###########
+    ## RDIFF ##
+    ###########
+
+    local RDIFF_TARGET_DIRECTORY=$(getConfigValue $absoluteConfigDir "rdiff_target")
+    local RDIFF_COMMAND=$(buildRdiffCommand "${absoluteConfigDir}")
+
+    if [[ -z "${RDIFF_COMMAND}" ]]; then
+      logError "Failed building the rdiff-backup command. Please check your config (infrabackup show) and validate your system (infrabackup validate-system)"
+      exit $?
+    fi
+
+    # If the diff target does not exist, create it
+    if [[ ! -d "${RDIFF_TARGET_DIRECTORY}" ]]; then
+      mkdir -p "${RDIFF_TARGET_DIRECTORY}"
+    fi
+
+    log "Starting rdiff"
+
+    eval "${RDIFF_COMMAND}"
+
+    if [ $? -ne 0 ]; then
+      export HAS_ANY_ERROR=true
+      log "rdiff command had an error"
+    else
+      log "rdiff success"
+    fi
+
+    ## AFTER-RDIFF HOOKS ##
+    runHooks $backupName "after-rdiff"
+
+    if [[ $? -ne 0 ]]; then
+      export HAS_ANY_ERROR=true
+      logError "after-rdiff hook give a non-zero exit code"
+    fi
+
   fi
-
-  ## AFTER-RSYNC HOOKS ##
-  runHooks $backupName "after-rsync"
-
-  if [[ $? -ne 0 ]]; then
-    export HAS_ANY_ERROR=true
-    logError "after-rsync give a non-zero exit code"
-  fi
-
-  ###########
-  ## RDIFF ##
-  ###########
-
-  local RDIFF_TARGET_DIRECTORY=$(getConfigValue $absoluteConfigDir "rdiff_target")
-  local RDIFF_COMMAND=$(buildRdiffCommand "${absoluteConfigDir}")
-
-  if [[ -z "${RDIFF_COMMAND}" ]]; then
-    logError "Failed building the rdiff-backup command. Please check your config (infrabackup show) and validate your system (infrabackup validate-system)"
-    exit $?
-  fi
-
-  # If the diff target does not exist, create it
-  if [[ ! -d "${RDIFF_TARGET_DIRECTORY}" ]]; then
-    mkdir -p "${RDIFF_TARGET_DIRECTORY}"
-  fi
-
-  log "Starting rdiff"
-
-  eval "${RDIFF_COMMAND}"
-
-  if [ $? -ne 0 ]; then
-    export HAS_ANY_ERROR=true
-    log "rdiff command had an error"
-  else
-    log "rdiff success"
-  fi
-
-  ## AFTER-RDIFF HOOKS ##
-  runHooks $backupName "after-rdiff"
-
-  if [[ $? -ne 0 ]]; then
-    export HAS_ANY_ERROR=true
-    logError "after-rdiff hook give a non-zero exit code"
-  fi
-
   local MAIL_TO=$(getConfigValue $absoluteConfigDir "mail_to")
 
   ###########
