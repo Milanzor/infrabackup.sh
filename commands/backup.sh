@@ -64,8 +64,9 @@ backup() {
   fi
 
   bash -c "${RSYNC_COMMAND}"
+  RSYNC_EXIT_CODE=${PIPESTATUS[0]}
 
-  if [ $? -ne 0 ]; then
+  if [ $RSYNC_EXIT_CODE -ne 0 ]; then
     export HAS_ANY_ERROR=true
     log "rsync command had an error"
   else
@@ -100,8 +101,9 @@ backup() {
   log "Starting rdiff"
 
   bash -c "${RDIFF_COMMAND}"
+  RDIFF_EXIT_CODE=${PIPESTATUS[0]}
 
-  if [ $? -ne 0 ]; then
+  if [ $RDIFF_EXIT_CODE -ne 0 ]; then
     export HAS_ANY_ERROR=true
     log "rdiff command had an error"
   else
