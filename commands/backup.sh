@@ -2,6 +2,8 @@
 
 backup() {
 
+  set -o pipefail
+
   $(validateSystem >/dev/null)
   validateSystemExitCode=$?
 
@@ -63,10 +65,9 @@ backup() {
     exit $?
   fi
 
-  bash -c "${RSYNC_COMMAND}"
-  RSYNC_EXIT_CODE=${PIPESTATUS[0]}
+  eval "${RSYNC_COMMAND}"
 
-  if [ $RSYNC_EXIT_CODE -ne 0 ]; then
+  if [ $? -ne 0 ]; then
     export HAS_ANY_ERROR=true
     log "rsync command had an error"
   else
@@ -100,10 +101,9 @@ backup() {
 
   log "Starting rdiff"
 
-  bash -c "${RDIFF_COMMAND}"
-  RDIFF_EXIT_CODE=${PIPESTATUS[0]}
+  eval "${RDIFF_COMMAND}"
 
-  if [ $RDIFF_EXIT_CODE -ne 0 ]; then
+  if [ $? -ne 0 ]; then
     export HAS_ANY_ERROR=true
     log "rdiff command had an error"
   else
