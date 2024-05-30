@@ -68,7 +68,8 @@ backup() {
   eval "${RSYNC_COMMAND}"
   RSYNC_EXIT_CODE=$?
 
-  if [ $RSYNC_EXIT_CODE -ne 0 ]; then
+  # 24 is the rsync exit code for "some files vanished before they could be transferred" which is allowed
+  if [ $RSYNC_EXIT_CODE -ne 0 ] && [ $RSYNC_EXIT_CODE -ne 24 ] ; then
     export HAS_ANY_ERROR=true
     log "rsync command had an error"
   else
