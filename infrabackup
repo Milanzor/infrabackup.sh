@@ -30,6 +30,8 @@ source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/validate-system.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/install.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/uninstall.sh"
 source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/restore.sh"
+source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/test-restore.sh"
+source "${INFRABACKUP_INSTALLATION_DIRECTORY}/commands/verify.sh"
 
 case $1 in
 
@@ -57,8 +59,17 @@ purge)
   purge $2
   exit $?
   ;;
+verify)
+  verify $2
+  exit $?
+  ;;
 restore)
   restore $2 $3 $4 $5
+  exit $?
+  ;;
+"test-restore")
+  # Pass through all args after the subcommand
+  testRestore "${@:2}"
   exit $?
   ;;
 create)

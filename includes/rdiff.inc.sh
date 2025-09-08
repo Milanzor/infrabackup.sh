@@ -54,6 +54,22 @@ buildRdiffPurgeCommand() {
   echo "rdiff-backup ${RDIFF_ARGS} ${RDIFF_TARGET_DIRECTORY} 2>&1 | tee -a ${LOGFILE}"
 }
 
+buildRdiffVerifyCommand() {
+
+  if [[ $(systemHasRdiffBackupInstalled) = "false" ]]; then
+    exit 1
+  fi
+
+  local absoluteConfigDir="${1}"
+
+  local RDIFF_TARGET_DIRECTORY=$(getConfigValue "${absoluteConfigDir}" "rdiff_target")
+
+  # Verify the integrity of the rdiff-backup repository
+  local RDIFF_ARGS="-v5 --verify"
+
+  echo "rdiff-backup ${RDIFF_ARGS} ${RDIFF_TARGET_DIRECTORY} 2>&1 | tee -a ${LOGFILE}"
+}
+
 buildRdiffRestoreCommand() {
 
   if [[ $(systemHasRdiffBackupInstalled) = "false" ]]; then
