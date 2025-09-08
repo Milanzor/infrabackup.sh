@@ -86,7 +86,8 @@ testRestore() {
 
   info "Executing: ${RDIFF_RESTORE_COMMAND}"
 
-  bash -c "${RDIFF_RESTORE_COMMAND}"
+  # Suppress rdiff-backup output during test-restore; keep only our status messages
+  bash -c "${RDIFF_RESTORE_COMMAND}" >/dev/null 2>&1
   if [[ $? -ne 0 ]]; then
     error "Test restore command had an error"
     if [[ "${NO_CLEANUP}" = true ]]; then
@@ -112,15 +113,20 @@ testRestore() {
         error "Pattern not found in restored file: ${RESTORED_PATH}"
         ANY_VERIFY_FAILED=true
       else
-        success "Pattern found in restored file"
+        success "Pattern found in restored file:"
+        info " - ${RESTORED_PATH}"
       fi
     else
       # Directory: search recursively
-      if ! grep -a -R -n -F -- "${VERIFY_CONTAINS}" "${RESTORED_PATH}" >/dev/null 2>&1; then
+      mapfile -t MATCHED_FILES < <(grep -a -R -l -F -- "${VERIFY_CONTAINS}" "${RESTORED_PATH}" 2>/dev/null)
+      if [[ ${#MATCHED_FILES[@]} -eq 0 ]]; then
         error "Pattern not found in any restored files under: ${RESTORED_PATH}"
         ANY_VERIFY_FAILED=true
       else
-        success "Pattern found in one or more restored files"
+        success "Pattern found in ${#MATCHED_FILES[@]} restored file(s):"
+        for f in "${MATCHED_FILES[@]}"; do
+          info " - ${f}"
+        done
       fi
     fi
   fi
